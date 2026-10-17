@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101511">
+  <title>指トレ｜クライミングタイマー</title>
+  <style>
+    :root{color-scheme:dark;--bg:#101511;--panel:#191f1a;--line:#303a31;--text:#f3f5ef;--muted:#9aa69a;--lime:#c9f36a;--orange:#ffab70;--blue:#90c9ff}
+    *{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 50% -15%,#293a2b 0,transparent 55%),var(--bg);color:var(--text);font-family:ui-sans-serif,system-ui,-apple-system,"Hiragino Kaku Gothic ProN",Meiryo,sans-serif;display:flex;justify-content:center;padding:30px 16px 40px}
+    main{width:min(100%,760px)}header{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px}.eyebrow{font-size:11px;letter-spacing:.2em;color:var(--lime);font-weight:800}.brand{font-size:14px;color:var(--muted)}h1{font-size:clamp(26px,5vw,38px);letter-spacing:-.04em;margin:5px 0 0}.badge{border:1px solid var(--line);border-radius:99px;padding:8px 12px;color:var(--muted);font-size:12px}
+    .timer{background:linear-gradient(145deg,#1d251e,#161b17);border:1px solid var(--line);border-radius:26px;padding:28px clamp(20px,5vw,44px) 25px;box-shadow:0 22px 70px #0005}.sectionline{display:flex;align-items:center;justify-content:space-between;gap:12px}.phase{font-size:12px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--lime)}.elapsed{font-variant-numeric:tabular-nums;font-size:12px;color:var(--muted)}.title{font-size:clamp(22px,4vw,30px);font-weight:750;margin:8px 0 0}.detail{color:var(--muted);font-size:14px;margin-top:5px}
+    .dial{width:min(62vw,280px);aspect-ratio:1;margin:28px auto 20px;position:relative;display:grid;place-items:center}.dial svg{position:absolute;inset:0;transform:rotate(-90deg);width:100%;height:100%}.track,.arc{fill:none;stroke-width:7}.track{stroke:#303a31}.arc{stroke:var(--lime);stroke-linecap:round;transition:stroke-dashoffset .2s linear,stroke .2s}.dial.rest .arc{stroke:var(--orange)}.dial.pull .arc{stroke:var(--blue)}.clock{text-align:center}.clock strong{display:block;font-size:clamp(64px,15vw,90px);line-height:1;font-weight:650;letter-spacing:-.07em;font-variant-numeric:tabular-nums}.clock span{display:block;color:var(--muted);font-size:12px;margin-top:9px;letter-spacing:.1em}.cue{text-align:center;font-size:15px;font-weight:650;min-height:24px}.cue em{font-style:normal;color:var(--lime)}.progress{height:5px;background:#303a31;border-radius:9px;overflow:hidden;margin:22px 0 8px}.progress i{display:block;height:100%;width:0;background:var(--lime);transition:width .25s}.counts{display:flex;justify-content:space-between;color:var(--muted);font-size:12px}.controls{display:flex;gap:10px;justify-content:center;margin-top:24px}.controls button{font:inherit;font-weight:750;border:0;border-radius:14px;padding:14px 23px;cursor:pointer;transition:transform .12s,filter .12s}.controls button:active{transform:scale(.97)}.primary{background:var(--lime);color:#17200e;min-width:155px}.secondary{background:#29312a;color:var(--text);border:1px solid var(--line)!important}.iconbtn{width:48px;padding:12px!important;font-size:18px!important}
+    .workout{margin-top:22px;background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:19px 20px}.workout h2{font-size:12px;letter-spacing:.14em;color:var(--muted);margin:0 0 14px}.steps{display:grid;grid-template-columns:1fr 1fr;gap:9px}.step{padding:12px 13px;border-radius:12px;border:1px solid transparent;background:#202721;color:var(--muted);font-size:13px;display:flex;justify-content:space-between;gap:8px}.step b{color:var(--text);font-weight:650}.step.active{border-color:#a9d84e66;background:#293321;color:var(--lime)}.step.done{opacity:.48}.step small{font-size:11px;white-space:nowrap}.note{font-size:11px;color:var(--muted);line-height:1.6;margin:13px 2px 0}.footer{margin-top:14px;text-align:center;font-size:11px;color:#788278}
+    @media(max-width:520px){body{padding:21px 12px 28px}.badge{font-size:11px;padding:7px 9px}.timer{padding:21px 18px}.dial{margin:22px auto 16px}.steps{grid-template-columns:1fr}.step{padding:10px 12px}.workout{padding:16px}}
+  </style>
+</head>
+<body>
+<main>
+  <header><div><div class="eyebrow">CLIMBING TRAINING</div><h1>指トレタイマー</h1></div><div class="badge">2000 下段・中段</div></header>
+  <section class="timer" aria-live="polite">
+    <div class="sectionline"><span class="phase" id="phase">READY</span><span class="elapsed" id="elapsed">経過 00:00</span></div>
+    <div class="title" id="title">トレーニング開始</div><div class="detail" id="detail">メニューを確認してスタート</div>
+    <div class="dial" id="dial"><svg viewBox="0 0 100 100" aria-hidden="true"><circle class="track" cx="50" cy="50" r="44"/><circle class="arc" id="arc" cx="50" cy="50" r="44"/></svg><div class="clock"><strong id="clock">00:07</strong><span id="clockLabel">次の動作まで</span></div></div>
+    <div class="cue" id="cue">準備ができたら <em>スタート</em></div>
+    <div class="progress"><i id="progress"></i></div><div class="counts"><span id="count">全体 0 / 0</span><span id="next">—</span></div>
+    <div class="controls"><button type="button" class="secondary iconbtn" id="reset" title="最初から">↺</button><button type="button" class="primary" id="toggle">スタート</button><button type="button" class="secondary iconbtn" id="skip" title="次へ">↠</button></div>
+  </section>
+  <section class="workout"><h2>本日のメニュー</h2><div class="steps" id="steps"></div><p class="note">懸垂は各1分の開始時に5回。残り時間はレストとしてカウントします。画面を開いたままにすると、各フェーズの切り替わりで音が鳴ります。</p></section>
+  <div class="footer">タップで開始・一時停止　 · 　↠ で次のフェーズへ</div>
+</main>
+<script>
+(()=>{
+  const phases=[];
+  for(let set=1;set<=4;set++){
+    for(let rep=1;rep<=6;rep++){
+      phases.push({type:'hang',duration:7,title:'指トレ｜2000 下段',detail:`セット ${set} / 4　・　インターバル ${rep} / 6`,cue:'保持する',label:`下段 セット${set}`,group:`finger${set}`});
+      phases.push({type:'rest',duration:3,title:'指トレ｜2000 下段',detail:`セット ${set} / 4　・　インターバル ${rep} / 6`,cue:'レスト',label:`下段 セット${set}`,group:`finger${set}`});
+    }
+    if(set<4) phases.push({type:'longrest',duration:120,title:'セット間レスト',detail:`指トレ｜セット ${set} 完了`,cue:'次のセットに備える',label:'セット間レスト',group:`finger${set}-rest`});
+  }
+  phases.push({type:'longrest',duration:300,title:'指トレ完了',detail:'懸垂に移る前にしっかり休憩',cue:'5分レスト',label:'指トレ後 5分',group:'finger-final'});
+  for(const [name,grip] of [['普通懸垂','順手'],['逆手懸垂','逆手']]) for(let i=1;i<=10;i++) phases.push({type:'pull',duration:60,title:name,detail:`${grip}　・　セット ${i} / 10`,cue:'5回',label:`${name} ${i}/10`,group:name});
+  const $=id=>document.getElementById(id), circumference=2*Math.PI*44;
+  const arc=$('arc'); arc.style.strokeDasharray=circumference; arc.style.strokeDashoffset=0;
+  let index=0,remaining=phases[0].duration,running=false,elapsed=0,last=0,raf=0,ctx;
+  function fmt(n){const m=Math.floor(n/60),s=n%60;return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`}
+  function beep(long=false){try{ctx=ctx||new (window.AudioContext||window.webkitAudioContext)();if(ctx.state==='suspended')ctx.resume();const o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.frequency.value=long?740:960;g.gain.setValueAtTime(.001,ctx.currentTime);g.gain.exponentialRampToValueAtTime(.16,ctx.currentTime+.015);g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+(long?.28:.12));o.start();o.stop(ctx.currentTime+(long?.3:.14))}catch{}}
+  function drawSteps(){const groups=[['指トレ','2000 下段｜7秒保持 / 3秒レスト × 6 を4セット'],['セット間レスト','各セット間 2分'],['指トレ後レスト','5分'],['普通懸垂','5回 / 分 × 10セット'],['逆手懸垂','5回 / 分 × 10セット']];$('steps').innerHTML=groups.map(([name,desc])=>`<div class="step" id="step-${name}"><b>${name}</b><small>${desc}</small></div>`).join('')}
+  function update(){const p=phases[index];const done=index>=phases.length;if(done){$('phase').textContent='COMPLETE';$('title').textContent='トレーニング完了';$('detail').textContent='おつかれさまでした';$('clock').textContent='✓';$('clockLabel').textContent='';$('cue').innerHTML='今日のメニューを完了';$('count').textContent=`全体 ${phases.length} / ${phases.length}`;$('next').textContent='';$('progress').style.width='100%';$('toggle').textContent='完了';$('toggle').disabled=true;$('dial').className='dial';return}
+    const mode=p.type==='hang'?'HANG':p.type==='pull'?'PULL UP':'REST';$('phase').textContent=mode;$('title').textContent=p.title;$('detail').textContent=p.detail;$('clock').textContent=fmt(remaining);$('clockLabel').textContent=p.type==='pull'?'5回を行う':'残り時間';$('cue').innerHTML=p.type==='hang'?`保持 <em>7秒</em>`:p.type==='pull'?`各セット開始時に <em>5回</em>`:p.cue;
+    $('elapsed').textContent=`経過 ${fmt(elapsed)}`;$('count').textContent=`全体 ${index+1} / ${phases.length}`;$('progress').style.width=`${index/phases.length*100}%`;
+    $('next').textContent=index+1<phases.length?`次：${phases[index+1].label}`:'最後のセット';$('dial').className='dial '+(p.type==='pull'?'pull':p.type==='hang'?'':'rest');arc.style.strokeDashoffset=circumference*(1-remaining/p.duration);
+    for(const el of document.querySelectorAll('.step'))el.classList.remove('active','done');
+    let active=p.type==='hang'?'指トレ':p.type==='pull'?p.title:p.title==='セット間レスト'?'セット間レスト':'指トレ後レスト';const node=$('step-'+active);if(node)node.classList.add('active');
+  }
+  function advance(){index++;if(index>=phases.length){running=false;$('toggle').disabled=true;update();beep(true);return}remaining=phases[index].duration;beep(phases[index].type==='longrest');update()}
+  function tick(t){if(!running)return;if(!last)last=t;const delta=(t-last)/1000;last=t;elapsed+=delta;remaining-=delta;if(remaining<=0){advance();if(!running)return} $('clock').textContent=fmt(Math.ceil(remaining));$('elapsed').textContent=`経過 ${fmt(Math.floor(elapsed))}`;arc.style.strokeDashoffset=circumference*(1-Math.max(0,remaining)/phases[index].duration);raf=requestAnimationFrame(tick)}
+  $('toggle').onclick=()=>{if(index>=phases.length)return;running=!running;$('toggle').textContent=running?'一時停止':'再開';if(running){last=0;beep();raf=requestAnimationFrame(tick)}else{cancelAnimationFrame(raf);last=0}};
+  $('skip').onclick=()=>{if(index<phases.length){advance();if(running){last=0}}};$('reset').onclick=()=>{running=false;cancelAnimationFrame(raf);index=0;remaining=phases[0].duration;elapsed=0;last=0;$('toggle').disabled=false;$('toggle').textContent='スタート';update()};
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden&&running){last=0}});
+  drawSteps();update();
+})();
+</script>
+</body>
+</html>
