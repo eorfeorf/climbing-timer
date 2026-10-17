@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#101511">
   <title>指トレ｜クライミングタイマー</title>
   <style>
@@ -33,26 +33,96 @@
     .timer[data-mode="pull"] .phase{color:var(--blue);background:#90c9ff14}
     .step{flex-wrap:wrap}.step small{white-space:normal}
     @media(max-width:520px){.metrics{gap:8px}.metric{padding:12px}.metric-value{font-size:34px}.dial{width:220px;max-width:66vw}.upcoming-title{font-size:19px}}
+
+    .workout summary{cursor:pointer;font-size:13px;font-weight:700;color:var(--muted)}
+    .workout[open] summary{margin-bottom:16px}
+    .current-exercise{min-width:0}
+    @media(max-width:600px){
+      body{height:100svh;min-height:540px;padding:max(8px,env(safe-area-inset-top)) 10px max(8px,env(safe-area-inset-bottom))}
+      main{height:100%;display:flex;flex-direction:column;gap:7px;min-width:0}
+      header{flex:none;margin:0;min-height:32px}
+      .eyebrow{display:none}
+      h1{font-size:20px;line-height:1.3;margin:0;letter-spacing:-.03em}
+      .badge{font-size:10px;padding:5px 8px}
+      .timer{flex:1;min-height:0;display:grid;grid-template-rows:auto auto auto minmax(90px,1fr) auto auto auto;gap:7px;padding:12px;border-radius:19px;box-shadow:none}
+      .sectionline{gap:6px;min-width:0}
+      .phase{font-size:11px;padding:5px 8px;line-height:1.3}
+      .elapsed{font-size:10px;white-space:nowrap}
+      .current-exercise{display:grid;grid-template-columns:1fr auto;column-gap:8px;align-items:end}
+      .now-label{grid-column:1/-1;margin:0;font-size:10px;line-height:1.4}
+      .title{font-size:23px;line-height:1.3;margin:2px 0 0}
+      .detail{font-size:11px;line-height:1.4;margin:0 0 2px;max-width:165px;text-align:right}
+      .metrics{gap:7px;margin:0}
+      .metric{min-width:0;padding:7px 10px;border-radius:12px}
+      .metric-label{font-size:11px;line-height:1.3}
+      .metric-value{font-size:30px;line-height:1.15;margin:1px 0 2px}
+      .metric-value small{font-size:16px}
+      .metric-note{font-size:10px;line-height:1.3;min-height:13px}
+      .dial{height:100%;width:auto;max-height:min(25svh,190px);max-width:100%;min-height:0;aspect-ratio:1;align-self:center;justify-self:center;margin:0;container-type:inline-size}
+      .clock strong{font-size:clamp(27px,29cqw,62px);letter-spacing:-.06em}
+      .clock span{font-size:clamp(8px,6cqw,11px);line-height:1.2;margin-top:5px;letter-spacing:0}
+      .cue,.counts,.footer{display:none}
+      .upcoming{min-width:0;margin:0;padding:8px 10px;border-radius:12px;display:grid;grid-template-columns:auto 1fr;column-gap:9px;align-items:baseline}
+      .upcoming-label{font-size:10px;line-height:1.4}
+      .upcoming-title{font-size:17px;line-height:1.3;margin:0}
+      .upcoming-note{grid-column:1/-1;font-size:10px;line-height:1.4;margin-top:2px}
+      .next-action{grid-column:1/-1;font-size:10px;line-height:1.4;margin-top:5px;padding-top:5px}
+      .progress{height:3px;margin:0}
+      .controls{margin:0;gap:8px}
+      .controls button{min-height:44px;padding:10px 15px;border-radius:11px}
+      .controls .primary{flex:1;min-width:0;font-size:15px}
+      .controls .iconbtn{width:48px;flex:none;padding:8px!important}
+      .workout{flex:none;margin:0;padding:8px 12px;border-radius:12px}
+      .workout summary{font-size:11px;line-height:1.4}
+      .workout h2{margin-bottom:10px}
+      .workout .steps{grid-template-columns:1fr}
+      .workout[open] summary{margin-bottom:12px}
+      body:has(.workout[open]){height:auto;min-height:100svh}
+      main:has(.workout[open]){height:auto}
+      main:has(.workout[open]) .timer{flex:none;height:calc(100svh - 92px);min-height:440px}
+    }
+    @media(max-width:600px) and (max-height:650px){
+      main{gap:5px}.timer{padding:9px;gap:5px}
+      header{min-height:28px}h1{font-size:18px}
+      .title{font-size:20px}.metric{padding:5px 8px}.metric-value{font-size:26px}
+      .metric-note{display:none}.upcoming{padding:7px 9px}.upcoming-note{font-size:9px}
+      .next-action{margin-top:3px;padding-top:3px}
+    }
+    @media(max-width:600px) and (prefers-reduced-motion:reduce){.arc,.progress i{transition:none}}
+
+    .dial svg{pointer-events:none}
+    .timer-toggle{position:absolute;inset:0;width:100%;height:100%;border:0;border-radius:50%;padding:0;background:transparent;color:var(--text);font:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation;display:flex;flex-direction:column;align-items:center;justify-content:center}
+    .timer-toggle:focus-visible{outline:3px solid var(--blue);outline-offset:4px}
+    .timer-toggle:active{background:#c9f36a0c}
+    .timer-toggle:disabled{cursor:default}
+    .clock .clock-action{color:var(--lime);font-size:11px;font-weight:750;letter-spacing:0;background:#c9f36a12;padding:4px 9px;border-radius:99px;margin-top:10px}
+    .controls .secondary{flex:1;max-width:220px;font-size:13px}
+    @media(max-width:600px){
+      .clock strong{font-size:clamp(27px,29cqw,62px)}
+      .clock .clock-action{font-size:clamp(7px,6cqw,10px);padding:3px 6px;margin-top:5px}
+      .controls .secondary{max-width:none;font-size:12px}
+    }
+    .session-meta{text-align:right}.wake-status{display:block;font-size:10px;color:var(--lime);line-height:1.3;margin-top:2px}.wake-status:empty{display:none}
   </style>
 </head>
 <body>
 <main>
   <header><div><div class="eyebrow">CLIMBING TRAINING</div><h1>指トレタイマー</h1></div><div class="badge">2000 下段・中段</div></header>
   <section class="timer" id="timer" aria-live="polite">
-    <div class="sectionline"><span class="phase" id="phase">READY</span><span class="elapsed" id="elapsed">経過 00:00</span></div>
-    <span class="now-label">今の種目</span>
-    <div class="title" id="title">指トレ</div><div class="detail" id="detail">2000 下段</div>
+    <div class="sectionline"><span class="phase" id="phase">READY</span><div class="session-meta"><span class="elapsed" id="elapsed">経過 00:00</span><span class="wake-status" id="wakeStatus" role="status"></span></div></div>
+    <div class="current-exercise"><span class="now-label">今の種目</span>
+    <div class="title" id="title">指トレ</div><div class="detail" id="detail">2000 下段</div></div>
     <div class="metrics">
       <div class="metric"><span class="metric-label">セット</span><strong class="metric-value" id="setValue">1 <small>/ 4</small></strong><span class="metric-note" id="setNote">全4セット</span></div>
       <div class="metric"><span class="metric-label" id="intervalLabel">インターバル</span><strong class="metric-value" id="intervalValue">1 <small>/ 6</small></strong><span class="metric-note" id="intervalNote">7秒保持 ＋ 3秒レスト</span></div>
     </div>
-    <div class="dial" id="dial"><svg viewBox="0 0 100 100" aria-hidden="true"><circle class="track" cx="50" cy="50" r="44"/><circle class="arc" id="arc" cx="50" cy="50" r="44"/></svg><div class="clock"><strong id="clock">00:07</strong><span id="clockLabel">次の動作まで</span></div></div>
+    <div class="dial" id="dial"><svg viewBox="0 0 100 100" aria-hidden="true"><circle class="track" cx="50" cy="50" r="44"/><circle class="arc" id="arc" cx="50" cy="50" r="44"/></svg><button type="button" class="clock timer-toggle" id="toggle" aria-label="タイマーを開始" aria-pressed="false"><strong id="clock">00:07</strong><span id="clockLabel">次の動作まで</span><span class="clock-action" id="toggleLabel">タップして開始</span></button></div>
     <div class="cue" id="cue">準備ができたら <em>スタート</em></div>
     <div class="upcoming"><div class="upcoming-label">次の種目</div><div class="upcoming-title" id="nextExercise">普通懸垂</div><div class="upcoming-note" id="nextExerciseNote">指トレ4セット ＋ 5分休憩のあと</div><div class="next-action">次の動作：<strong id="nextAction">3秒レスト</strong></div></div>
     <div class="progress"><i id="progress"></i></div><div class="counts"><span id="count">全体 0 / 0</span><span id="next">—</span></div>
-    <div class="controls"><button type="button" class="secondary iconbtn" id="reset" title="最初から">↺</button><button type="button" class="primary" id="toggle">スタート</button><button type="button" class="secondary iconbtn" id="skip" title="次へ">↠</button></div>
+    <div class="controls"><button type="button" class="secondary" id="reset">↺ 最初から</button><button type="button" class="secondary" id="skip">次へ ↠</button></div>
   </section>
-  <section class="workout"><h2>本日のメニュー</h2><div class="steps" id="steps"></div><p class="note">懸垂は各1分の開始時に5回。残り時間はレストとしてカウントします。画面を開いたままにすると、各フェーズの切り替わりで音が鳴ります。</p></section>
+  <details class="workout"><summary>メニュー・使い方</summary><h2>本日のメニュー</h2><div class="steps" id="steps"></div><p class="note">懸垂は各1分の開始時に5回。残り時間はレストとしてカウントします。画面を開いたままにすると、各フェーズの切り替わりで音が鳴ります。対応ブラウザでは実行中のスリープを防止します。省電力設定などにより利用できない場合は画面に表示します。</p></details>
   <div class="footer">タップで開始・一時停止　 · 　↠ で次のフェーズへ</div>
 </main>
 <script>
@@ -84,7 +154,38 @@
     if(p.type==='transition')return '5分休憩 → 普通懸垂';
     return `${p.exercise}・5回（セット ${p.set}/10）`;
   }
+  let screenLock=null,screenLockRequest=null;
+  async function syncScreenLock(){
+    if(!running||document.visibilityState==='hidden'){
+      $('wakeStatus').textContent='';
+      if(screenLock){const lock=screenLock;screenLock=null;try{await lock.release()}catch{}}
+      return;
+    }
+    if(screenLock||screenLockRequest)return;
+    if(!('wakeLock' in navigator)){$('wakeStatus').textContent='スリープ防止：非対応';return}
+    $('wakeStatus').textContent='スリープ防止を設定中';
+    try{
+      screenLockRequest=navigator.wakeLock.request('screen');
+      const lock=await screenLockRequest;
+      if(!running||document.visibilityState==='hidden'){await lock.release();return}
+      screenLock=lock;
+      $('wakeStatus').textContent='スリープ防止中';
+      lock.addEventListener('release',()=>{
+        if(screenLock===lock){screenLock=null;$('wakeStatus').textContent=running?'スリープ防止が解除されました':''}
+      });
+    }catch{
+      if(running)$('wakeStatus').textContent='スリープ防止：利用不可';
+    }finally{screenLockRequest=null}
+  }
+  function syncToggle(){
+    syncScreenLock();
+    const done=index>=phases.length;
+    $('toggleLabel').textContent=done?'完了':running?'タップで一時停止':elapsed>0||index>0?'タップで再開':'タップして開始';
+    $('toggle').setAttribute('aria-label',done?'トレーニング完了':running?'タイマーを一時停止':'タイマーを開始・再開');
+    $('toggle').setAttribute('aria-pressed',String(running));
+  }
   function update(){
+    syncToggle();
     const p=phases[index],done=index>=phases.length;
     $('elapsed').textContent=`経過 ${fmt(Math.floor(elapsed))}`;
     if(done){
@@ -94,7 +195,7 @@
       $('intervalLabel').textContent='インターバル';$('intervalValue').textContent='—';$('intervalNote').textContent='すべて終了しました';
       $('nextExercise').textContent='すべて終了';$('nextExerciseNote').textContent='おつかれさまでした';$('nextAction').textContent='なし';
       $('count').textContent='トレーニング完了';$('next').textContent='100%';$('progress').style.width='100%';
-      $('toggle').textContent='完了';$('toggle').disabled=true;$('dial').className='dial';$('timer').dataset.mode='';arc.style.strokeDashoffset=0;
+      $('toggleLabel').textContent='完了';$('toggle').disabled=true;$('dial').className='dial';$('timer').dataset.mode='';arc.style.strokeDashoffset=0;
       for(const el of document.querySelectorAll('.step')){el.classList.remove('active');el.classList.add('done')}
       return;
     }
@@ -107,7 +208,7 @@
     $('setNote').textContent=p.type==='transition'?'指トレ4セット完了':p.type==='longrest'?`${p.set}セット完了・次は${p.set+1}セット目`:`今は ${p.set} セット目`;
     $('intervalLabel').textContent=p.type==='pull'?'今回の回数':'インターバル';
     $('intervalValue').innerHTML=p.type==='pull'?'5 <small>回</small>':`${p.interval} <small>/ 6</small>`;
-    $('intervalNote').textContent=p.type==='pull'?'1分の開始時に5回':p.type==='longrest'||p.type==='transition'?'6インターバル完了':'7秒保持 ＋ 3秒レスト ＝ 1回';
+    $('intervalNote').textContent=p.type==='pull'?'1分の開始時に5回':p.type==='longrest'||p.type==='transition'?'6インターバル完了':'7秒保持 ＋ 3秒レスト';
     $('clock').textContent=fmt(Math.ceil(remaining));
     $('clockLabel').textContent=p.type==='hang'?'保持終了まで':p.type==='pull'?'次のセットまで':'休憩終了まで';
     $('cue').innerHTML=p.type==='hang'?'しっかり保持 <em>7秒</em>':p.type==='pull'?'開始時に <em>5回</em> → 残りはレスト':p.type==='rest'?'手を離して <em>3秒レスト</em>':p.type==='transition'?'指トレ完了・懸垂に備えて休憩':`セット ${p.set} 完了・次のセットに備えて休憩`;
@@ -125,9 +226,10 @@
   }
   function advance(){index++;if(index>=phases.length){running=false;$('toggle').disabled=true;update();beep(true);return}remaining=phases[index].duration;beep(phases[index].type==='longrest');update()}
   function tick(t){if(!running)return;if(!last)last=t;const delta=(t-last)/1000;last=t;elapsed+=delta;remaining-=delta;if(remaining<=0){advance();if(!running)return} $('clock').textContent=fmt(Math.ceil(remaining));$('elapsed').textContent=`経過 ${fmt(Math.floor(elapsed))}`;arc.style.strokeDashoffset=circumference*(1-Math.max(0,remaining)/phases[index].duration);raf=requestAnimationFrame(tick)}
-  $('toggle').onclick=()=>{if(index>=phases.length)return;running=!running;$('toggle').textContent=running?'一時停止':'再開';if(running){last=0;beep();raf=requestAnimationFrame(tick)}else{cancelAnimationFrame(raf);last=0}};
-  $('skip').onclick=()=>{if(index<phases.length){advance();if(running){last=0}}};$('reset').onclick=()=>{running=false;cancelAnimationFrame(raf);index=0;remaining=phases[0].duration;elapsed=0;last=0;$('toggle').disabled=false;$('toggle').textContent='スタート';update()};
-  document.addEventListener('visibilitychange',()=>{if(!document.hidden&&running){last=0}});
+  $('toggle').onclick=()=>{if(index>=phases.length)return;running=!running;syncToggle();if(running){last=0;beep();raf=requestAnimationFrame(tick)}else{cancelAnimationFrame(raf);last=0}};
+  $('skip').onclick=()=>{if(index<phases.length){advance();if(running){last=0}}};$('reset').onclick=()=>{running=false;cancelAnimationFrame(raf);index=0;remaining=phases[0].duration;elapsed=0;last=0;$('toggle').disabled=false;syncToggle();update()};
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden&&running){last=0}syncScreenLock()});
+  window.addEventListener('pagehide',()=>{if(screenLock){screenLock.release().catch(()=>{});screenLock=null}});
   drawSteps();update();
 })();
 </script>
