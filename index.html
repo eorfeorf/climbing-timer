@@ -13,16 +13,42 @@
     .dial{width:min(62vw,280px);aspect-ratio:1;margin:28px auto 20px;position:relative;display:grid;place-items:center}.dial svg{position:absolute;inset:0;transform:rotate(-90deg);width:100%;height:100%}.track,.arc{fill:none;stroke-width:7}.track{stroke:#303a31}.arc{stroke:var(--lime);stroke-linecap:round;transition:stroke-dashoffset .2s linear,stroke .2s}.dial.rest .arc{stroke:var(--orange)}.dial.pull .arc{stroke:var(--blue)}.clock{text-align:center}.clock strong{display:block;font-size:clamp(64px,15vw,90px);line-height:1;font-weight:650;letter-spacing:-.07em;font-variant-numeric:tabular-nums}.clock span{display:block;color:var(--muted);font-size:12px;margin-top:9px;letter-spacing:.1em}.cue{text-align:center;font-size:15px;font-weight:650;min-height:24px}.cue em{font-style:normal;color:var(--lime)}.progress{height:5px;background:#303a31;border-radius:9px;overflow:hidden;margin:22px 0 8px}.progress i{display:block;height:100%;width:0;background:var(--lime);transition:width .25s}.counts{display:flex;justify-content:space-between;color:var(--muted);font-size:12px}.controls{display:flex;gap:10px;justify-content:center;margin-top:24px}.controls button{font:inherit;font-weight:750;border:0;border-radius:14px;padding:14px 23px;cursor:pointer;transition:transform .12s,filter .12s}.controls button:active{transform:scale(.97)}.primary{background:var(--lime);color:#17200e;min-width:155px}.secondary{background:#29312a;color:var(--text);border:1px solid var(--line)!important}.iconbtn{width:48px;padding:12px!important;font-size:18px!important}
     .workout{margin-top:22px;background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:19px 20px}.workout h2{font-size:12px;letter-spacing:.14em;color:var(--muted);margin:0 0 14px}.steps{display:grid;grid-template-columns:1fr 1fr;gap:9px}.step{padding:12px 13px;border-radius:12px;border:1px solid transparent;background:#202721;color:var(--muted);font-size:13px;display:flex;justify-content:space-between;gap:8px}.step b{color:var(--text);font-weight:650}.step.active{border-color:#a9d84e66;background:#293321;color:var(--lime)}.step.done{opacity:.48}.step small{font-size:11px;white-space:nowrap}.note{font-size:11px;color:var(--muted);line-height:1.6;margin:13px 2px 0}.footer{margin-top:14px;text-align:center;font-size:11px;color:#788278}
     @media(max-width:520px){body{padding:21px 12px 28px}.badge{font-size:11px;padding:7px 9px}.timer{padding:21px 18px}.dial{margin:22px auto 16px}.steps{grid-template-columns:1fr}.step{padding:10px 12px}.workout{padding:16px}}
+
+    .now-label{display:block;margin-top:20px;font-size:12px;font-weight:750;color:var(--muted);letter-spacing:.08em}
+    .metrics{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:20px}
+    .metric{background:#101711;border:1px solid var(--line);border-radius:16px;padding:15px 16px}
+    .metric-label{display:block;color:var(--muted);font-size:12px;font-weight:700}
+    .metric-value{display:block;margin:4px 0;font-size:38px;line-height:1.2;font-weight:750;font-variant-numeric:tabular-nums;color:var(--lime)}
+    .metric-value small{font-size:18px;color:var(--muted);font-weight:500}
+    .metric-note{display:block;font-size:11px;color:var(--muted);line-height:1.5;min-height:17px}
+    .upcoming{background:#101711;border:1px solid var(--line);border-radius:16px;padding:16px;margin-top:20px}
+    .upcoming-label{font-size:12px;color:var(--blue);font-weight:750}
+    .upcoming-title{font-size:21px;font-weight:750;margin-top:5px}
+    .upcoming-note{font-size:12px;color:var(--muted);line-height:1.6;margin-top:3px}
+    .next-action{font-size:12px;line-height:1.7;color:var(--muted);margin:13px 0 0;padding-top:12px;border-top:1px solid var(--line)}
+    .next-action strong{font-weight:650;color:var(--text)}
+    .dial{margin-top:22px;margin-bottom:16px}
+    .phase{background:#c9f31a14;padding:7px 10px;border-radius:8px;letter-spacing:.04em}
+    .timer[data-mode="rest"] .phase{color:var(--orange);background:#ffab7014}
+    .timer[data-mode="pull"] .phase{color:var(--blue);background:#90c9ff14}
+    .step{flex-wrap:wrap}.step small{white-space:normal}
+    @media(max-width:520px){.metrics{gap:8px}.metric{padding:12px}.metric-value{font-size:34px}.dial{width:220px;max-width:66vw}.upcoming-title{font-size:19px}}
   </style>
 </head>
 <body>
 <main>
   <header><div><div class="eyebrow">CLIMBING TRAINING</div><h1>指トレタイマー</h1></div><div class="badge">2000 下段・中段</div></header>
-  <section class="timer" aria-live="polite">
+  <section class="timer" id="timer" aria-live="polite">
     <div class="sectionline"><span class="phase" id="phase">READY</span><span class="elapsed" id="elapsed">経過 00:00</span></div>
-    <div class="title" id="title">トレーニング開始</div><div class="detail" id="detail">メニューを確認してスタート</div>
+    <span class="now-label">今の種目</span>
+    <div class="title" id="title">指トレ</div><div class="detail" id="detail">2000 下段</div>
+    <div class="metrics">
+      <div class="metric"><span class="metric-label">セット</span><strong class="metric-value" id="setValue">1 <small>/ 4</small></strong><span class="metric-note" id="setNote">全4セット</span></div>
+      <div class="metric"><span class="metric-label" id="intervalLabel">インターバル</span><strong class="metric-value" id="intervalValue">1 <small>/ 6</small></strong><span class="metric-note" id="intervalNote">7秒保持 ＋ 3秒レスト</span></div>
+    </div>
     <div class="dial" id="dial"><svg viewBox="0 0 100 100" aria-hidden="true"><circle class="track" cx="50" cy="50" r="44"/><circle class="arc" id="arc" cx="50" cy="50" r="44"/></svg><div class="clock"><strong id="clock">00:07</strong><span id="clockLabel">次の動作まで</span></div></div>
     <div class="cue" id="cue">準備ができたら <em>スタート</em></div>
+    <div class="upcoming"><div class="upcoming-label">次の種目</div><div class="upcoming-title" id="nextExercise">普通懸垂</div><div class="upcoming-note" id="nextExerciseNote">指トレ4セット ＋ 5分休憩のあと</div><div class="next-action">次の動作：<strong id="nextAction">3秒レスト</strong></div></div>
     <div class="progress"><i id="progress"></i></div><div class="counts"><span id="count">全体 0 / 0</span><span id="next">—</span></div>
     <div class="controls"><button type="button" class="secondary iconbtn" id="reset" title="最初から">↺</button><button type="button" class="primary" id="toggle">スタート</button><button type="button" class="secondary iconbtn" id="skip" title="次へ">↠</button></div>
   </section>
@@ -33,26 +59,69 @@
 (()=>{
   const phases=[];
   for(let set=1;set<=4;set++){
-    for(let rep=1;rep<=6;rep++){
-      phases.push({type:'hang',duration:7,title:'指トレ｜2000 下段',detail:`セット ${set} / 4　・　インターバル ${rep} / 6`,cue:'保持する',label:`下段 セット${set}`,group:`finger${set}`});
-      phases.push({type:'rest',duration:3,title:'指トレ｜2000 下段',detail:`セット ${set} / 4　・　インターバル ${rep} / 6`,cue:'レスト',label:`下段 セット${set}`,group:`finger${set}`});
+    const meta={exercise:'指トレ',station:'2000 下段',set,setTotal:4};
+    for(let interval=1;interval<=6;interval++){
+      phases.push({...meta,type:'hang',duration:7,interval,intervalTotal:6});
+      phases.push({...meta,type:'rest',duration:3,interval,intervalTotal:6});
     }
-    if(set<4) phases.push({type:'longrest',duration:120,title:'セット間レスト',detail:`指トレ｜セット ${set} 完了`,cue:'次のセットに備える',label:'セット間レスト',group:`finger${set}-rest`});
+    if(set<4) phases.push({...meta,type:'longrest',duration:120,interval:6,intervalTotal:6});
   }
-  phases.push({type:'longrest',duration:300,title:'指トレ完了',detail:'懸垂に移る前にしっかり休憩',cue:'5分レスト',label:'指トレ後 5分',group:'finger-final'});
-  for(const [name,grip] of [['普通懸垂','順手'],['逆手懸垂','逆手']]) for(let i=1;i<=10;i++) phases.push({type:'pull',duration:60,title:name,detail:`${grip}　・　セット ${i} / 10`,cue:'5回',label:`${name} ${i}/10`,group:name});
+  phases.push({exercise:'指トレ',station:'指トレ終了後の休憩',type:'transition',duration:300,set:4,setTotal:4,interval:6,intervalTotal:6});
+  for(const [exercise,station] of [['普通懸垂','2000 中段・順手'],['逆手懸垂','逆手']]){
+    for(let set=1;set<=10;set++) phases.push({exercise,station,type:'pull',duration:60,set,setTotal:10});
+  }
   const $=id=>document.getElementById(id), circumference=2*Math.PI*44;
   const arc=$('arc'); arc.style.strokeDasharray=circumference; arc.style.strokeDashoffset=0;
   let index=0,remaining=phases[0].duration,running=false,elapsed=0,last=0,raf=0,ctx;
   function fmt(n){const m=Math.floor(n/60),s=n%60;return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`}
   function beep(long=false){try{ctx=ctx||new (window.AudioContext||window.webkitAudioContext)();if(ctx.state==='suspended')ctx.resume();const o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.frequency.value=long?740:960;g.gain.setValueAtTime(.001,ctx.currentTime);g.gain.exponentialRampToValueAtTime(.16,ctx.currentTime+.015);g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+(long?.28:.12));o.start();o.stop(ctx.currentTime+(long?.3:.14))}catch{}}
   function drawSteps(){const groups=[['指トレ','2000 下段｜7秒保持 / 3秒レスト × 6 を4セット'],['セット間レスト','各セット間 2分'],['指トレ後レスト','5分'],['普通懸垂','5回 / 分 × 10セット'],['逆手懸垂','5回 / 分 × 10セット']];$('steps').innerHTML=groups.map(([name,desc])=>`<div class="step" id="step-${name}"><b>${name}</b><small>${desc}</small></div>`).join('')}
-  function update(){const p=phases[index];const done=index>=phases.length;if(done){$('phase').textContent='COMPLETE';$('title').textContent='トレーニング完了';$('detail').textContent='おつかれさまでした';$('clock').textContent='✓';$('clockLabel').textContent='';$('cue').innerHTML='今日のメニューを完了';$('count').textContent=`全体 ${phases.length} / ${phases.length}`;$('next').textContent='';$('progress').style.width='100%';$('toggle').textContent='完了';$('toggle').disabled=true;$('dial').className='dial';return}
-    const mode=p.type==='hang'?'HANG':p.type==='pull'?'PULL UP':'REST';$('phase').textContent=mode;$('title').textContent=p.title;$('detail').textContent=p.detail;$('clock').textContent=fmt(remaining);$('clockLabel').textContent=p.type==='pull'?'5回を行う':'残り時間';$('cue').innerHTML=p.type==='hang'?`保持 <em>7秒</em>`:p.type==='pull'?`各セット開始時に <em>5回</em>`:p.cue;
-    $('elapsed').textContent=`経過 ${fmt(elapsed)}`;$('count').textContent=`全体 ${index+1} / ${phases.length}`;$('progress').style.width=`${index/phases.length*100}%`;
-    $('next').textContent=index+1<phases.length?`次：${phases[index+1].label}`:'最後のセット';$('dial').className='dial '+(p.type==='pull'?'pull':p.type==='hang'?'':'rest');arc.style.strokeDashoffset=circumference*(1-remaining/p.duration);
+  function actionName(p){
+    if(!p)return 'すべてのトレーニング完了';
+    if(p.type==='hang')return `指トレ・7秒保持（セット ${p.set}/4、インターバル ${p.interval}/6）`;
+    if(p.type==='rest')return '3秒レスト';
+    if(p.type==='longrest')return `2分休憩 → 指トレ セット ${p.set+1}/4`;
+    if(p.type==='transition')return '5分休憩 → 普通懸垂';
+    return `${p.exercise}・5回（セット ${p.set}/10）`;
+  }
+  function update(){
+    const p=phases[index],done=index>=phases.length;
+    $('elapsed').textContent=`経過 ${fmt(Math.floor(elapsed))}`;
+    if(done){
+      $('phase').textContent='すべて完了';$('title').textContent='トレーニング完了';$('detail').textContent='おつかれさまでした';
+      $('clock').textContent='✓';$('clockLabel').textContent='完了';$('cue').textContent='今日のメニューを完了';
+      $('setValue').textContent='完了';$('setNote').textContent='すべてのセットを終了';
+      $('intervalLabel').textContent='インターバル';$('intervalValue').textContent='—';$('intervalNote').textContent='すべて終了しました';
+      $('nextExercise').textContent='すべて終了';$('nextExerciseNote').textContent='おつかれさまでした';$('nextAction').textContent='なし';
+      $('count').textContent='トレーニング完了';$('next').textContent='100%';$('progress').style.width='100%';
+      $('toggle').textContent='完了';$('toggle').disabled=true;$('dial').className='dial';$('timer').dataset.mode='';arc.style.strokeDashoffset=0;
+      for(const el of document.querySelectorAll('.step')){el.classList.remove('active');el.classList.add('done')}
+      return;
+    }
+    const resting=['rest','longrest','transition'].includes(p.type);
+    $('timer').dataset.mode=resting?'rest':p.type==='pull'?'pull':'hang';
+    $('phase').textContent=p.type==='hang'?'7秒 保持':p.type==='rest'?'3秒 レスト':p.type==='longrest'?'セット間 2分休憩':p.type==='transition'?'種目間 5分休憩':'懸垂・各セット5回';
+    $('title').textContent=p.exercise;
+    $('detail').textContent=p.station;
+    $('setValue').innerHTML=`${p.set} <small>/ ${p.setTotal}</small>`;
+    $('setNote').textContent=p.type==='transition'?'指トレ4セット完了':p.type==='longrest'?`${p.set}セット完了・次は${p.set+1}セット目`:`今は ${p.set} セット目`;
+    $('intervalLabel').textContent=p.type==='pull'?'今回の回数':'インターバル';
+    $('intervalValue').innerHTML=p.type==='pull'?'5 <small>回</small>':`${p.interval} <small>/ 6</small>`;
+    $('intervalNote').textContent=p.type==='pull'?'1分の開始時に5回':p.type==='longrest'||p.type==='transition'?'6インターバル完了':'7秒保持 ＋ 3秒レスト ＝ 1回';
+    $('clock').textContent=fmt(Math.ceil(remaining));
+    $('clockLabel').textContent=p.type==='hang'?'保持終了まで':p.type==='pull'?'次のセットまで':'休憩終了まで';
+    $('cue').innerHTML=p.type==='hang'?'しっかり保持 <em>7秒</em>':p.type==='pull'?'開始時に <em>5回</em> → 残りはレスト':p.type==='rest'?'手を離して <em>3秒レスト</em>':p.type==='transition'?'指トレ完了・懸垂に備えて休憩':`セット ${p.set} 完了・次のセットに備えて休憩`;
+    $('nextExercise').textContent=p.exercise==='指トレ'?'普通懸垂':p.exercise==='普通懸垂'?'逆手懸垂':'トレーニング完了';
+    $('nextExerciseNote').textContent=p.exercise==='指トレ'?(p.type==='transition'?'この休憩が終わったら開始':'指トレ4セット ＋ 5分休憩のあと'):p.exercise==='普通懸垂'?'普通懸垂10セットが終わったら開始':'逆手懸垂10セットでメニュー終了';
+    $('nextAction').textContent=actionName(phases[index+1]);
+    $('count').textContent='全体の進み具合';
+    const percent=Math.round(index/phases.length*100);
+    $('next').textContent=`${percent}%`;$('progress').style.width=`${percent}%`;
+    $('dial').className='dial '+(p.type==='pull'?'pull':resting?'rest':'');
+    arc.style.strokeDashoffset=circumference*(1-remaining/p.duration);
     for(const el of document.querySelectorAll('.step'))el.classList.remove('active','done');
-    let active=p.type==='hang'?'指トレ':p.type==='pull'?p.title:p.title==='セット間レスト'?'セット間レスト':'指トレ後レスト';const node=$('step-'+active);if(node)node.classList.add('active');
+    const active=p.type==='transition'?'指トレ後レスト':p.type==='longrest'?'セット間レスト':p.exercise;
+    const node=$('step-'+active);if(node)node.classList.add('active');
   }
   function advance(){index++;if(index>=phases.length){running=false;$('toggle').disabled=true;update();beep(true);return}remaining=phases[index].duration;beep(phases[index].type==='longrest');update()}
   function tick(t){if(!running)return;if(!last)last=t;const delta=(t-last)/1000;last=t;elapsed+=delta;remaining-=delta;if(remaining<=0){advance();if(!running)return} $('clock').textContent=fmt(Math.ceil(remaining));$('elapsed').textContent=`経過 ${fmt(Math.floor(elapsed))}`;arc.style.strokeDashoffset=circumference*(1-Math.max(0,remaining)/phases[index].duration);raf=requestAnimationFrame(tick)}
