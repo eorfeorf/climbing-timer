@@ -114,8 +114,7 @@ header>div{min-width:0}header{gap:12px}header h1{font-size:clamp(20px,4vw,32px);
 .menu-editor{color:var(--text);background:#171e18;border:1px solid var(--line);border-radius:22px;padding:0;width:min(760px,calc(100% - 24px));max-height:92svh;box-shadow:0 30px 100px #0008}
 .menu-editor::backdrop{background:#030805c9;backdrop-filter:blur(7px)}
 .menu-editor form{margin:0;display:flex;flex-direction:column;height:min(92svh,940px);max-height:92svh}
-.editor-header{flex:none;display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:21px 22px 16px;border-bottom:1px solid var(--line)}
-.editor-header h2{font-size:22px;letter-spacing:-.03em;margin:0 0 5px}.editor-header p{font-size:12px;color:var(--muted);margin:0;line-height:1.6}
+.editor-utilities{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 0 8px}
 .editor-close{width:40px;height:40px;flex:none;background:#29312a;border:1px solid var(--line);color:var(--text);font-size:24px;border-radius:12px;cursor:pointer}
 .editor-content{padding:20px 22px;min-height:0;overflow-y:auto;overscroll-behavior:contain;scrollbar-gutter:stable}
 .editor-content h3{font-size:15px;line-height:1.5;margin:22px 0 10px}.editor-content h3:first-child{margin-top:0}
@@ -144,7 +143,7 @@ header>div{min-width:0}header{gap:12px}header h1{font-size:clamp(20px,4vw,32px);
   header{gap:7px}.edit-menu-button{font-size:10px;padding:6px 9px;min-height:32px}
   .current-exercise{grid-template-columns:minmax(0,1fr) auto}.title,.upcoming-title{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}.next-action strong{overflow-wrap:anywhere}
   .menu-editor{width:calc(100% - 12px);max-height:calc(100svh - 12px);border-radius:16px}.menu-editor form{height:calc(100svh - 12px);max-height:calc(100svh - 12px)}
-  .editor-header{padding:15px 14px 12px;gap:10px}.editor-header h2{font-size:19px}.editor-header p{font-size:11px}.editor-content{padding:15px 12px;scrollbar-gutter:auto}
+  .editor-content{padding:15px 12px;scrollbar-gutter:auto}
   .editor-grid{gap:12px 9px}.editor-field{font-size:11px}.editor-field small{font-size:10px}.editor-field input,.editor-field select{padding:9px;min-height:44px}
   .exercise-editor>summary{padding-left:11px;gap:7px;flex-wrap:wrap}.exercise-kind{font-size:9px;margin-left:34px;width:100%;margin-top:-3px}.exercise-body{padding:0 11px 12px}
   .exercise-actions{gap:5px}.exercise-actions button{min-height:40px;padding:7px 9px}.editor-footer{padding:11px 12px max(12px,env(safe-area-inset-bottom))}.editor-close{width:36px;height:36px}
@@ -155,22 +154,18 @@ header>div{min-width:0}header{gap:12px}header h1{font-size:clamp(20px,4vw,32px);
 .builder-library,.builder-help{border:1px solid var(--line);border-radius:12px;background:#1c261e;margin-bottom:10px;padding:11px 13px}
 .builder-library>summary,.builder-help>summary{cursor:pointer;font-size:12px;color:var(--muted);line-height:1.6}
 .builder-library[open]>summary{margin-bottom:12px}.builder-library .editor-field{margin-top:12px}.builder-help p{font-size:11px;line-height:1.9;color:var(--muted)}
-.builder-toolbar{position:sticky;top:-1px;z-index:4;background:#171e18f5;backdrop-filter:blur(8px);padding:9px 0 7px;border-bottom:1px solid var(--line);margin-bottom:14px}
-.builder-tool-heading{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}.builder-tool-heading>strong{font-size:13px}
 .history-buttons{display:flex;gap:5px}.history-buttons button,.move-bar button{font-size:11px;color:var(--text);background:#2c382e;border:1px solid #425346;border-radius:8px;padding:7px 9px;min-height:34px;cursor:pointer}
-.block-palette,.inline-palette{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:9px}
+.inline-palette{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:9px}
 .part-exercise{--part-line:#75b7ff;--part-fill:#20324a;--part-ink:#bbdcff}.part-work{--part-line:#97d774;--part-fill:#293c24;--part-ink:#d0efbb}.part-rest{--part-line:#6bd6c9;--part-fill:#1b3a37;--part-ink:#b4eee6}.part-loop{--part-line:#ffb05c;--part-fill:#4a351f;--part-ink:#ffe0b6}.part-prepare{--part-line:#c7a0ff;--part-fill:#372944;--part-ink:#e5d3ff}
 .part-loop.loop-intervals{--part-line:#65beff;--part-fill:#173650;--part-ink:#c1e6ff}.part-loop.loop-sets{--part-line:#ffb05c;--part-fill:#4a351f;--part-ink:#ffe0b6}.part-loop.loop-repeat{--part-line:#d6a5e9;--part-fill:#3d2947;--part-ink:#f0d5fc}.part-loop.loop-rounds{--part-line:#e7ce70;--part-fill:#413a20;--part-ink:#f4e6aa}
-.loop-legend{display:flex;gap:5px 14px;flex-wrap:wrap;margin:8px 0 0;font-size:10px;line-height:1.5;color:var(--muted)}.loop-legend strong{color:var(--part-ink)}.loop-legend strong:before{content:'';display:inline-block;width:8px;height:8px;border-radius:2px;background:var(--part-line);margin-right:4px}
 .palette-part{background:var(--part-fill);border:1px solid var(--part-line);color:var(--part-ink);border-radius:8px 8px 8px 3px;font-size:12px;font-weight:700;min-height:38px;padding:8px 11px;cursor:pointer}
-.insert-target{font-size:10px;line-height:1.6;color:var(--muted);margin:7px 0 0}
-.program-cap{display:inline-block;background:#d7eb9b;color:#202d12;font-size:11px;font-weight:750;border-radius:16px 16px 4px 4px;padding:9px 17px}.program-finish{border-radius:4px 4px 16px 16px;padding:8px 17px;margin-top:2px}
 .block-canvas{min-width:0;padding-top:2px}
 .program-block{min-width:0;position:relative;background:var(--part-fill);border:1px solid var(--part-line);border-left:5px solid var(--part-line);border-radius:8px;color:var(--text)}
 .program-block:before{content:'';position:absolute;top:-5px;left:22px;width:28px;height:5px;background:var(--part-fill);border:1px solid var(--part-line);border-bottom:0;border-radius:4px 4px 0 0}
 .block-top{display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:6px 8px;border-bottom:1px solid #ffffff0d}
 .block-kind{font-size:11px;font-weight:800;color:var(--part-ink)}
-.loop-summary{flex:0 0 100%;min-width:0;padding:3px 4px 4px;font-size:13px;line-height:1.6;color:var(--part-ink);overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
+.block-heading{display:flex;flex-direction:column;align-items:flex-start;gap:3px;flex:1 1 130px;min-width:0;min-height:36px;border:0;border-radius:6px;background:transparent;padding:4px;text-align:left;cursor:pointer;color:var(--part-ink)}.block-heading:hover{background:#ffffff0a}
+.loop-summary{display:block;min-width:0;font-size:13px;line-height:1.6;color:var(--part-ink);overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
 .drag-handle{font-size:21px;line-height:1;min-width:30px;min-height:34px;cursor:grab;background:transparent;color:var(--part-ink);border:0;border-radius:5px}
 .drag-handle:active{cursor:grabbing}.block-actions{display:flex;gap:4px;flex-wrap:wrap;margin-left:auto}
 .block-actions button{color:var(--part-ink);background:#0002;border:1px solid #ffffff26;border-radius:6px;min-height:32px;min-width:30px;padding:5px 8px;font-size:10px;cursor:pointer}.block-actions button.danger{color:#ffc5b6}
@@ -182,20 +177,21 @@ header>div{min-width:0}header{gap:12px}header h1{font-size:clamp(20px,4vw,32px);
 .work-rest-summary{font-size:11px;color:var(--part-ink);line-height:1.7;margin:9px 0 0}
 .block-options{font-size:10px;color:var(--part-ink);margin-top:9px}.block-options>summary{cursor:pointer;line-height:1.6}.block-options[open]>summary{margin-bottom:8px}.block-options p{font-size:10px;line-height:1.7;color:var(--muted)}
 .block-children{min-width:0;margin-left:11px;padding:7px 8px 9px 12px;background:#101711;border-left:3px solid var(--part-line);border-top-left-radius:8px;border-bottom-left-radius:8px}
-.block-end{padding:6px 12px;font-size:10px;color:var(--part-ink);min-height:24px}.folded-summary{font-size:11px;color:var(--muted);margin:4px 0}
+.block-end{padding:6px 12px;font-size:10px;color:var(--part-ink);min-height:24px}
+.folded-summary{display:flex;flex-direction:column;gap:4px;width:100%;min-height:48px;border:1px dashed var(--part-line);border-radius:8px;background:#ffffff05;padding:9px 10px;margin:4px 0 7px;font-size:11px;line-height:1.7;color:var(--part-ink);text-align:left;cursor:pointer;overflow-wrap:anywhere}.folded-summary>span{font-weight:750}.folded-summary>small{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;font-size:10px;color:var(--muted)}.folded-summary:hover{background:#ffffff0d}
 .insert-zone{min-width:0;position:relative;padding:2px 0}
 .insert-slot{display:block;width:100%;border:1px dashed #5a725144;border-radius:7px;background:transparent;color:#829478;font-size:11px;line-height:1.4;min-height:23px;cursor:pointer;padding:2px 8px}
 .insert-slot:hover,.insert-slot:focus-visible,.insert-zone.selected>.insert-slot{background:#b8e58117;border-color:var(--lime);color:var(--lime)}
 .insert-zone.selected{padding-bottom:8px}.inline-palette{background:#17231a;border:1px solid #506341;padding:9px;border-radius:10px;margin:4px 0 0}.inline-palette>span{font-size:10px;color:var(--muted);width:100%}.inline-palette .palette-part{font-size:11px;min-height:34px;padding:6px 9px}
 .palette-close{margin-left:auto;color:var(--muted);font-size:18px;border:0;border-radius:6px;background:transparent;min-width:32px;min-height:32px;cursor:pointer}
-.move-bar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;background:#20374b;border:1px solid #73b8f9;color:#c7e4ff;border-radius:8px;padding:8px;margin-top:8px;font-size:11px;line-height:1.5}.move-bar[hidden]{display:none}
+.move-bar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;background:#20374b;border:1px solid #73b8f9;color:#c7e4ff;border-radius:8px;padding:8px;margin:0 0 8px;font-size:11px;line-height:1.5}.move-bar[hidden]{display:none}
 .moving-block{outline:2px solid var(--blue);outline-offset:1px;opacity:.6}.move-zone>.insert-slot,.dragging .insert-slot{min-height:32px;border-color:#85bce784;color:var(--blue);background:#90c9ff0a}
 .insert-slot.drag-over{background:#90c9ff33;border:2px solid var(--blue);color:#fff}.insert-slot:disabled{opacity:.15;cursor:not-allowed}
 .visually-hidden{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 @media(max-width:600px){
   .menu-editor{width:calc(100% - 10px)}.editor-content{padding:10px 8px}.builder-library,.builder-help{padding:9px 10px}
-  .builder-toolbar{padding:7px 0}.builder-tool-heading>strong{font-size:12px}.history-buttons button{font-size:10px;padding:6px;min-height:34px}
-  .block-palette{gap:4px}.palette-part{font-size:11px;padding:7px 8px;min-height:40px}
+  .history-buttons button{font-size:10px;padding:6px;min-height:34px}
+  .palette-part{font-size:11px;padding:7px 8px;min-height:40px}
   .block-top{padding:5px;gap:4px}.block-actions{gap:3px}.block-actions button{font-size:10px;min-height:36px;padding:5px 6px}.drag-handle{min-height:36px;min-width:26px}
   .block-settings{padding:8px}.block-children{margin-left:5px;padding-left:5px;padding-right:3px;border-left-width:3px}.program-block{border-left-width:4px}
   .block-grid{grid-template-columns:minmax(0,1fr)}.block-grid .wide{grid-column:auto}.block-field input,.block-field select{min-height:42px}.insert-slot{min-height:27px}
@@ -224,10 +220,10 @@ header>div{min-width:0}header{gap:12px}header h1{font-size:clamp(20px,4vw,32px);
   <details class="workout"><summary>メニュー・使い方</summary><p class="menu-description" id="activeMenuDescription"></p><div class="steps" id="steps"></div><p class="note">中央タップで開始・一時停止。回数のみの種目は、動作が終わったら「完了して次へ」を押してください。「回数＋制限時間」は開始時に指定回数を行い、残り時間をレストに使います。対応ブラウザでは実行中のスリープを防止します。作ったメニューはこのブラウザ内に保存されます。</p></details>
   <div class="footer">タップで開始・一時停止　 · 　↠ で次のフェーズへ</div>
 </main>
-<dialog class="menu-editor" id="menuEditor" aria-labelledby="editorTitle" aria-describedby="editorDescription">
+<dialog class="menu-editor" id="menuEditor" aria-label="メニューを編集">
   <form id="menuForm" novalidate>
-    <div class="editor-header"><div><h2 id="editorTitle">パーツでメニューを組む</h2><p id="editorDescription">動作＋休憩をインターバルでくり返し、セットでまとめます。</p></div><button type="button" class="editor-close" id="closeEditor" aria-label="編集をキャンセルして閉じる">×</button></div>
     <div class="editor-content">
+      <div class="editor-utilities"><div class="history-buttons"><button type="button" id="undoBlock" disabled>↶ 元に戻す</button><button type="button" id="redoBlock" disabled>↷ やり直す</button></div><button type="button" class="editor-close" id="closeEditor" aria-label="編集をキャンセルして閉じる">×</button></div>
       <details class="builder-library">
         <summary id="librarySummary">保存メニュー・名前・音の設定</summary>
         <label class="editor-field" for="menuSelect"><span>保存したメニューを選ぶ</span><select id="menuSelect"></select></label>
@@ -235,16 +231,13 @@ header>div{min-width:0}header{gap:12px}header h1{font-size:clamp(20px,4vw,32px);
         <label class="editor-field" for="menuName"><span>メニュー名</span><input id="menuName" maxlength="40" required></label>
         <label class="editor-check"><input id="menuSound" type="checkbox" checked><span>動作・休憩の切り替え音を鳴らす</span></label>
       </details>
-      <details class="builder-help"><summary>組み立て方を見る</summary><p>① オレンジの「セット」を追加してセット数・セット間休憩を設定<br>② その中の「＋」で青の「インターバル」を追加して回数を設定<br>③ インターバルの中に「動作」を入れ、動作時間・動作後の休憩時間を設定</p><p>例：セット4回（セット間休憩120秒）→ インターバル6回 → 動作7秒・休憩3秒。1セットは1分で、セット間に2分休みます。最後のセット後にセット間休憩は入りません。休憩0秒なら動作後すぐ次へ進みます。</p><p>インターバルの追加休憩は通常0秒で使います。動作後の休憩は最後の回にも入り、独立した休憩パーツは追加の休憩として使えます。「回数＋制限時間」は持ち時間が終わってから休憩に進みます。</p><p>自由な構成には「くり返し」を使えます。「移動」→置きたい位置をタップでつなぎ替え、「外す」で取り外し、「元に戻す」で復元できます。パソコンでは⠿をドラッグして移動できます。</p></details>
-      <div class="builder-toolbar"><div class="builder-tool-heading"><strong>パーツを追加</strong><div class="history-buttons"><button type="button" id="undoBlock" disabled>↶ 元に戻す</button><button type="button" id="redoBlock" disabled>↷ やり直す</button></div></div><div class="block-palette" id="blockPalette"></div><p class="loop-legend"><span><strong class="part-loop loop-intervals">インターバル</strong>動作＋休憩のくり返し</span><span><strong class="part-loop loop-sets">セット</strong>そのまとまりのくり返し</span></p><p class="insert-target" id="insertTarget"></p><div class="move-bar" id="moveBar" hidden><span id="moveMessage"></span><button type="button" id="cancelMove">移動をやめる</button></div></div>
-      <div class="program-cap">▶ スタート</div>
+      <details class="builder-help"><summary>組み立て方を見る</summary><p>追加したい位置の「＋」を押してパーツを選びます。種目・セットの見出し、または「中の○パーツを表示」を押すと中身が開きます。</p><p>① オレンジの「セット」を追加してセット数・セット間休憩を設定<br>② その中の「＋」で青の「インターバル」を追加して回数を設定<br>③ インターバルの中に「動作」を入れ、動作時間・動作後の休憩時間を設定</p><p>例：セット4回（セット間休憩120秒）→ インターバル6回 → 動作7秒・休憩3秒。1セットは1分で、セット間に2分休みます。最後のセット後にセット間休憩は入りません。休憩0秒なら動作後すぐ次へ進みます。</p><p>インターバルの追加休憩は通常0秒で使います。動作後の休憩は最後の回にも入り、独立した休憩パーツは追加の休憩として使えます。「回数＋制限時間」は持ち時間が終わってから休憩に進みます。</p><p>自由な構成には「くり返し」を使えます。「移動」→置きたい位置をタップでつなぎ替え、「外す」で取り外し、「元に戻す」で復元できます。パソコンでは⠿をドラッグして移動できます。</p></details>
       <div class="block-canvas" id="blockCanvas" role="group" aria-label="メニューのブロック"></div>
-      <div class="program-cap program-finish">■ おわり</div>
       <p class="visually-hidden" id="builderNotice" role="status" aria-live="polite"></p>
       <button type="button" class="restore-preset" id="restorePreset">初期のボルダリングメニューを追加する</button>
       <p class="editor-hint">保存先はこのブラウザです。「保存して使う」でタイマーを最初に戻します。キャンセルすると今回の編集を破棄します。</p>
     </div>
-    <div class="editor-footer"><p class="editor-error" id="editorError" role="alert" hidden></p><p class="menu-estimate" id="menuEstimate" aria-live="polite"></p><div class="editor-footer-actions"><button type="button" class="secondary" id="cancelEditor">キャンセル</button><button type="submit" class="primary">保存して使う</button></div></div>
+    <div class="editor-footer"><div class="move-bar" id="moveBar" hidden><span id="moveMessage"></span><button type="button" id="cancelMove">移動をやめる</button></div><p class="editor-error" id="editorError" role="alert" hidden></p><p class="menu-estimate" id="menuEstimate" aria-live="polite"></p><div class="editor-footer-actions"><button type="button" class="secondary" id="cancelEditor">キャンセル</button><button type="submit" class="primary">保存して使う</button></div></div>
   </form>
 </dialog>
 <script>
@@ -838,10 +831,15 @@ if (typeof module !== 'undefined' && module.exports) module.exports = WorkoutMod
   }
   function nodeMarkup(node, position, siblings) {
     const owner = escapeHTML(node.id), container = Boolean(node.children);
+    const folded = foldedIds.has(node.id);
     const loop = node.type === 'loop' ? loopDisplay(node) : null;
     const label = loop ? loop.label : M.BLOCKS[node.type];
+    const summary = loop ? `<strong class="loop-summary" data-loop-summary="${owner}">${escapeHTML(M.blockTitle(node))}</strong>` : '';
+    const heading = container
+      ? `<button type="button" class="block-heading" data-action="fold" aria-expanded="${!folded}" aria-controls="children-${owner}"><span class="block-kind">${folded ? '▸' : '▾'} ${label}</span>${summary}</button>`
+      : `<span class="block-kind">${label}</span>`;
+    const childPreview = container ? node.children.slice(0, 3).map(M.blockTitle).join(' → ') + (node.children.length > 3 ? ' ほか' : '') : '';
     const controls = `<div class="block-actions">
-      ${container ? `<button type="button" data-action="fold" aria-expanded="${!foldedIds.has(node.id)}">${foldedIds.has(node.id) ? 'ひらく' : 'たたむ'}</button>` : ''}
       <button type="button" data-action="up"${position === 0 ? ' disabled' : ''} aria-label="${escapeHTML(M.blockTitle(node))}を上へ">↑</button>
       <button type="button" data-action="down"${position === siblings - 1 ? ' disabled' : ''} aria-label="${escapeHTML(M.blockTitle(node))}を下へ">↓</button>
       <button type="button" data-action="move">移動</button><button type="button" data-action="duplicate">複製</button><button type="button" data-action="delete" class="danger">外す</button>
@@ -861,9 +859,9 @@ if (typeof module !== 'undefined' && module.exports) module.exports = WorkoutMod
       extra = `<details class="block-options"><summary>名前（任意）</summary>${field(node, 'name', '名前', { placeholder: node.type === 'rest' ? '例：水分補給' : '例：道具を準備', wide: true })}</details>`;
     }
     return `<section class="program-block part-${node.type}${loop ? ` loop-${escapeHTML(node.role)}` : ''}${container ? ' container-block' : ''}${movingId === node.id ? ' moving-block' : ''}" data-node="${owner}" aria-label="${label}ブロック">
-      <div class="block-top"><button type="button" class="drag-handle" draggable="true" data-drag="${owner}" data-action="move" aria-label="ドラッグまたはタップで移動">⠿</button><span class="block-kind">${label}</span>${controls}${loop ? `<strong class="loop-summary" data-loop-summary="${owner}">${escapeHTML(M.blockTitle(node))}</strong>` : ''}</div>
+      <div class="block-top"><button type="button" class="drag-handle" draggable="true" data-drag="${owner}" data-action="move" aria-label="ドラッグまたはタップで移動">⠿</button>${heading}${controls}</div>
       <div class="block-settings">${body}${extra}</div>
-      ${container ? `<div class="block-children">${foldedIds.has(node.id) ? `<p class="folded-summary">中に ${M.countBlocks(node.children)} パーツ</p>${slotMarkup(node.id, node.children.length, true)}` : listMarkup(node.children, node.id)}</div><div class="block-end">${loop ? loop.end : '種目の終わり'}</div>` : ''}
+      ${container ? `<div class="block-children" id="children-${owner}">${folded ? `<button type="button" class="folded-summary" data-action="fold" aria-expanded="false"><span>▸ 中の ${M.countBlocks(node.children)} パーツを表示</span>${childPreview ? `<small>${escapeHTML(childPreview)}</small>` : ''}</button>${slotMarkup(node.id, node.children.length, true)}` : listMarkup(node.children, node.id)}</div><div class="block-end">${loop ? loop.end : '種目の終わり'}</div>` : ''}
     </section>`;
   }
   function renderBlocks() {
@@ -871,8 +869,6 @@ if (typeof module !== 'undefined' && module.exports) module.exports = WorkoutMod
     const moving = movingId && M.findBlock(draftMenu().blocks, movingId)?.node;
     $('moveMessage').textContent = moving ? `「${M.blockTitle(moving)}」の移動先をタップしてください。` : '';
     $('moveBar').hidden = !moving;
-    const parent = insertTarget?.parentId && M.findBlock(draftMenu().blocks, insertTarget.parentId)?.node;
-    $('insertTarget').textContent = insertTarget ? `追加先：${parent ? M.blockTitle(parent) + ' の中' : 'メニュー全体'}` : 'パーツをタップで末尾に追加。＋を押すと追加位置を選べます。';
     historyState(); updateEditorPreview();
   }
   function renderEditor() {
@@ -924,7 +920,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = WorkoutMod
   $('editMenu').onclick = () => {
     pause(); editorMenus = M.clone(library); editorId = activeId; insertTarget = movingId = null;
     undoStack = []; redoStack = []; foldedIds = new Set(draftMenu().blocks.slice(1).filter(node => node.children).map(node => node.id)); lastEditKey = ''; announce(''); renderEditor();
-    $('menuEditor').showModal(); $('menuSelect').focus();
+    $('menuEditor').showModal(); $('closeEditor').focus({ preventScroll: true });
   };
   $('cancelEditor').onclick = $('closeEditor').onclick = () => $('menuEditor').close();
   $('undoBlock').onclick = () => restoreHistory(undoStack, redoStack);
@@ -944,9 +940,6 @@ if (typeof module !== 'undefined' && module.exports) module.exports = WorkoutMod
   $('menuName').oninput = event => { remember('menu-name'); draftMenu().name = event.target.value; $('librarySummary').textContent = `${event.target.value || '名前未入力'}：メニューの設定・切り替え`; renderMenuSelect(); editorError(); updateEditorPreview(); };
   $('menuSound').oninput = event => { remember(); draftMenu().soundEnabled = event.target.checked; };
 
-  function paletteClick(event) { const button = event.target.closest('[data-add]'); if (button && !button.disabled) appendBlock(button.dataset.add, button.dataset.role); }
-  $('blockPalette').innerHTML = paletteMarkup();
-  $('blockPalette').addEventListener('click', paletteClick);
   $('blockCanvas').addEventListener('click', event => {
     const add = event.target.closest('[data-add]'); if (add && !add.disabled) { appendBlock(add.dataset.add, add.dataset.role); return; }
     const slot = event.target.closest('[data-parent]');
@@ -960,7 +953,15 @@ if (typeof module !== 'undefined' && module.exports) module.exports = WorkoutMod
     const action = button.dataset.action;
     if (action === 'close-palette') { insertTarget = null; renderBlocks(); return; }
     const id = button.closest('[data-node]')?.dataset.node, found = M.findBlock(draftMenu().blocks, id); if (!found) return;
-    if (action === 'fold') { if (foldedIds.has(id)) foldedIds.delete(id); else foldedIds.add(id); renderBlocks(); return; }
+    if (action === 'fold') {
+      const opening = foldedIds.has(id);
+      if (opening) foldedIds.delete(id); else foldedIds.add(id);
+      renderBlocks();
+      const block = Array.from($('blockCanvas').querySelectorAll('[data-node]')).find(element => element.dataset.node === id);
+      block?.querySelector('.block-heading')?.focus({ preventScroll: true });
+      announce(opening ? '中のパーツを表示しました。' : '中のパーツをたたみました。');
+      return;
+    }
     if (action === 'move') { movingId = movingId === id ? null : id; insertTarget = null; renderBlocks(); announce('＋の位置を選ぶと移動できます。'); return; }
     if (action === 'up' || action === 'down') { moveTo(found.parentId, found.index + (action === 'up' ? -1 : 2), id); return; }
     if (action === 'duplicate' && M.countBlocks(draftMenu().blocks) + M.countBlocks([found.node]) > 300) { editorError('ブロックは300個までです。'); return; }
