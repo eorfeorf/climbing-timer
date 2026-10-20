@@ -1,0 +1,1032 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#101511">
+  <title>ボルダリング｜トレーニングタイマー</title>
+  <style>
+    :root{color-scheme:dark;--bg:#101511;--panel:#191f1a;--line:#303a31;--text:#f3f5ef;--muted:#9aa69a;--lime:#c9f36a;--orange:#ffab70;--blue:#90c9ff}
+    *{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 50% -15%,#293a2b 0,transparent 55%),var(--bg);color:var(--text);font-family:ui-sans-serif,system-ui,-apple-system,"Hiragino Kaku Gothic ProN",Meiryo,sans-serif;display:flex;justify-content:center;padding:30px 16px 40px}
+    main{width:min(100%,760px)}header{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px}.eyebrow{font-size:11px;letter-spacing:.2em;color:var(--lime);font-weight:800}.brand{font-size:14px;color:var(--muted)}h1{font-size:clamp(26px,5vw,38px);letter-spacing:-.04em;margin:5px 0 0}.badge{border:1px solid var(--line);border-radius:99px;padding:8px 12px;color:var(--muted);font-size:12px}
+    .timer{background:linear-gradient(145deg,#1d251e,#161b17);border:1px solid var(--line);border-radius:26px;padding:28px clamp(20px,5vw,44px) 25px;box-shadow:0 22px 70px #0005}.sectionline{display:flex;align-items:center;justify-content:space-between;gap:12px}.phase{font-size:12px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--lime)}.elapsed{font-variant-numeric:tabular-nums;font-size:12px;color:var(--muted)}.title{font-size:clamp(22px,4vw,30px);font-weight:750;margin:8px 0 0}.detail{color:var(--muted);font-size:14px;margin-top:5px}
+    .dial{width:min(62vw,280px);aspect-ratio:1;margin:28px auto 20px;position:relative;display:grid;place-items:center}.dial svg{position:absolute;inset:0;transform:rotate(-90deg);width:100%;height:100%}.track,.arc{fill:none;stroke-width:7}.track{stroke:#303a31}.arc{stroke:var(--lime);stroke-linecap:round;transition:stroke-dashoffset .2s linear,stroke .2s}.dial.rest .arc{stroke:var(--orange)}.dial.pull .arc{stroke:var(--blue)}.clock{text-align:center}.clock strong{display:block;font-size:clamp(64px,15vw,90px);line-height:1;font-weight:650;letter-spacing:-.07em;font-variant-numeric:tabular-nums}.clock span{display:block;color:var(--muted);font-size:12px;margin-top:9px;letter-spacing:.1em}.cue{text-align:center;font-size:15px;font-weight:650;min-height:24px}.cue em{font-style:normal;color:var(--lime)}.progress{height:5px;background:#303a31;border-radius:9px;overflow:hidden;margin:22px 0 8px}.progress i{display:block;height:100%;width:0;background:var(--lime);transition:width .25s}.counts{display:flex;justify-content:space-between;color:var(--muted);font-size:12px}.controls{display:flex;gap:10px;justify-content:center;margin-top:24px}.controls button{font:inherit;font-weight:750;border:0;border-radius:14px;padding:14px 23px;cursor:pointer;transition:transform .12s,filter .12s}.controls button:active{transform:scale(.97)}.primary{background:var(--lime);color:#17200e;min-width:155px}.secondary{background:#29312a;color:var(--text);border:1px solid var(--line)!important}.iconbtn{width:48px;padding:12px!important;font-size:18px!important}
+    .workout{margin-top:22px;background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:19px 20px}.workout h2{font-size:12px;letter-spacing:.14em;color:var(--muted);margin:0 0 14px}.steps{display:grid;grid-template-columns:1fr 1fr;gap:9px}.step{padding:12px 13px;border-radius:12px;border:1px solid transparent;background:#202721;color:var(--muted);font-size:13px;display:flex;justify-content:space-between;gap:8px}.step b{color:var(--text);font-weight:650}.step.active{border-color:#a9d84e66;background:#293321;color:var(--lime)}.step.done{opacity:.48}.step small{font-size:11px;white-space:nowrap}.note{font-size:11px;color:var(--muted);line-height:1.6;margin:13px 2px 0}.footer{margin-top:14px;text-align:center;font-size:11px;color:#788278}
+    @media(max-width:520px){body{padding:21px 12px 28px}.badge{font-size:11px;padding:7px 9px}.timer{padding:21px 18px}.dial{margin:22px auto 16px}.steps{grid-template-columns:1fr}.step{padding:10px 12px}.workout{padding:16px}}
+
+    .now-label{display:block;margin-top:20px;font-size:12px;font-weight:750;color:var(--muted);letter-spacing:.08em}
+    .metrics{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:20px}
+    .metric{background:#101711;border:1px solid var(--line);border-radius:16px;padding:15px 16px}
+    .metric-label{display:block;color:var(--muted);font-size:12px;font-weight:700}
+    .metric-value{display:block;margin:4px 0;font-size:38px;line-height:1.2;font-weight:750;font-variant-numeric:tabular-nums;color:var(--lime)}
+    .metric-value small{font-size:18px;color:var(--muted);font-weight:500}
+    .metric-note{display:block;font-size:11px;color:var(--muted);line-height:1.5;min-height:17px}
+    .upcoming{background:#101711;border:1px solid var(--line);border-radius:16px;padding:16px;margin-top:20px}
+    .upcoming-label{font-size:12px;color:var(--blue);font-weight:750}
+    .upcoming-title{font-size:21px;font-weight:750;margin-top:5px}
+    .upcoming-note{font-size:12px;color:var(--muted);line-height:1.6;margin-top:3px}
+    .next-action{font-size:12px;line-height:1.7;color:var(--muted);margin:13px 0 0;padding-top:12px;border-top:1px solid var(--line)}
+    .next-action strong{font-weight:650;color:var(--text)}
+    .dial{margin-top:22px;margin-bottom:16px}
+    .phase{background:#c9f31a14;padding:7px 10px;border-radius:8px;letter-spacing:.04em}
+    .timer[data-mode="rest"] .phase{color:var(--orange);background:#ffab7014}
+    .timer[data-mode="pull"] .phase{color:var(--blue);background:#90c9ff14}
+    .step{flex-wrap:wrap}.step small{white-space:normal}
+    @media(max-width:520px){.metrics{gap:8px}.metric{padding:12px}.metric-value{font-size:34px}.dial{width:220px;max-width:66vw}.upcoming-title{font-size:19px}}
+
+    .workout summary{cursor:pointer;font-size:13px;font-weight:700;color:var(--muted)}
+    .workout[open] summary{margin-bottom:16px}
+    .current-exercise{min-width:0}
+    @media(max-width:600px){
+      body{height:100svh;min-height:540px;padding:max(8px,env(safe-area-inset-top)) 10px max(8px,env(safe-area-inset-bottom))}
+      main{height:100%;display:flex;flex-direction:column;gap:7px;min-width:0}
+      header{flex:none;margin:0;min-height:32px}
+      .eyebrow{display:none}
+      h1{font-size:20px;line-height:1.3;margin:0;letter-spacing:-.03em}
+      .badge{font-size:10px;padding:5px 8px}
+      .timer{flex:1;min-height:0;display:grid;grid-template-rows:auto auto auto minmax(90px,1fr) auto auto auto;gap:7px;padding:12px;border-radius:19px;box-shadow:none}
+      .sectionline{gap:6px;min-width:0}
+      .phase{font-size:11px;padding:5px 8px;line-height:1.3}
+      .elapsed{font-size:10px;white-space:nowrap}
+      .current-exercise{display:grid;grid-template-columns:1fr auto;column-gap:8px;align-items:end}
+      .now-label{grid-column:1/-1;margin:0;font-size:10px;line-height:1.4}
+      .title{font-size:23px;line-height:1.3;margin:2px 0 0}
+      .detail{font-size:11px;line-height:1.4;margin:0 0 2px;max-width:165px;text-align:right}
+      .metrics{gap:7px;margin:0}
+      .metric{min-width:0;padding:7px 10px;border-radius:12px}
+      .metric-label{font-size:11px;line-height:1.3}
+      .metric-value{font-size:30px;line-height:1.15;margin:1px 0 2px}
+      .metric-value small{font-size:16px}
+      .metric-note{font-size:10px;line-height:1.3;min-height:13px}
+      .dial{height:100%;width:auto;max-height:min(25svh,190px);max-width:100%;min-height:0;aspect-ratio:1;align-self:center;justify-self:center;margin:0;container-type:inline-size}
+      .clock strong{font-size:clamp(27px,29cqw,62px);letter-spacing:-.06em}
+      .clock span{font-size:clamp(8px,6cqw,11px);line-height:1.2;margin-top:5px;letter-spacing:0}
+      .cue,.counts,.footer{display:none}
+      .upcoming{min-width:0;margin:0;padding:8px 10px;border-radius:12px;display:grid;grid-template-columns:auto 1fr;column-gap:9px;align-items:baseline}
+      .upcoming-label{font-size:10px;line-height:1.4}
+      .upcoming-title{font-size:17px;line-height:1.3;margin:0}
+      .upcoming-note{grid-column:1/-1;font-size:10px;line-height:1.4;margin-top:2px}
+      .next-action{grid-column:1/-1;font-size:10px;line-height:1.4;margin-top:5px;padding-top:5px}
+      .progress{height:3px;margin:0}
+      .controls{margin:0;gap:8px}
+      .controls button{min-height:44px;padding:10px 15px;border-radius:11px}
+      .controls .primary{flex:1;min-width:0;font-size:15px}
+      .controls .iconbtn{width:48px;flex:none;padding:8px!important}
+      .workout{flex:none;margin:0;padding:8px 12px;border-radius:12px}
+      .workout summary{font-size:11px;line-height:1.4}
+      .workout h2{margin-bottom:10px}
+      .workout .steps{grid-template-columns:1fr}
+      .workout[open] summary{margin-bottom:12px}
+      body:has(.workout[open]){height:auto;min-height:100svh}
+      main:has(.workout[open]){height:auto}
+      main:has(.workout[open]) .timer{flex:none;height:calc(100svh - 92px);min-height:440px}
+    }
+    @media(max-width:600px) and (max-height:650px){
+      main{gap:5px}.timer{padding:9px;gap:5px}
+      header{min-height:28px}h1{font-size:18px}
+      .title{font-size:20px}.metric{padding:5px 8px}.metric-value{font-size:26px}
+      .metric-note{display:none}.upcoming{padding:7px 9px}.upcoming-note{font-size:9px}
+      .next-action{margin-top:3px;padding-top:3px}
+    }
+    @media(max-width:600px) and (prefers-reduced-motion:reduce){.arc,.progress i{transition:none}}
+
+    .dial svg{pointer-events:none}
+    .timer-toggle{position:absolute;inset:0;width:100%;height:100%;border:0;border-radius:50%;padding:0;background:transparent;color:var(--text);font:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation;display:flex;flex-direction:column;align-items:center;justify-content:center}
+    .timer-toggle:focus-visible{outline:3px solid var(--blue);outline-offset:4px}
+    .timer-toggle:active{background:#c9f36a0c}
+    .timer-toggle:disabled{cursor:default}
+    .clock .clock-action{color:var(--lime);font-size:11px;font-weight:750;letter-spacing:0;background:#c9f36a12;padding:4px 9px;border-radius:99px;margin-top:10px}
+    .controls .secondary{flex:1;max-width:220px;font-size:13px}
+    @media(max-width:600px){
+      .clock strong{font-size:clamp(27px,29cqw,62px)}
+      .clock .clock-action{font-size:clamp(7px,6cqw,10px);padding:3px 6px;margin-top:5px}
+      .controls .secondary{max-width:none;font-size:12px}
+    }
+    .session-meta{text-align:right}.wake-status{display:block;font-size:10px;color:var(--lime);line-height:1.3;margin-top:2px}.wake-status:empty{display:none}
+  </style>
+  <style>
+button,input,select{font:inherit}button{touch-action:manipulation}button:disabled{opacity:.4;cursor:default}button:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:2px solid var(--blue);outline-offset:3px}
+header>div{min-width:0}header{gap:12px}header h1{font-size:clamp(20px,4vw,32px);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.edit-menu-button{cursor:pointer;color:var(--lime);background:#c9f36a0b;white-space:nowrap;min-height:40px}
+.storage-notice{font-size:12px;line-height:1.5;background:#3b2a1e;color:#ffd5b8;padding:10px;border-radius:10px}
+.storage-notice[hidden]{display:none}.menu-description{color:var(--text);font-size:13px;line-height:1.6;margin:10px 0}
+.title,.upcoming-title{overflow-wrap:anywhere}.title{min-width:0}.step{align-items:flex-start;flex-direction:column}.step small{line-height:1.7}.step b{overflow-wrap:anywhere}
+.menu-editor{color:var(--text);background:#171e18;border:1px solid var(--line);border-radius:22px;padding:0;width:min(760px,calc(100% - 24px));max-height:92svh;box-shadow:0 30px 100px #0008}
+.menu-editor::backdrop{background:#030805c9;backdrop-filter:blur(7px)}
+.menu-editor form{margin:0;display:flex;flex-direction:column;height:min(92svh,940px);max-height:92svh}
+.editor-header{flex:none;display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:21px 22px 16px;border-bottom:1px solid var(--line)}
+.editor-header h2{font-size:22px;letter-spacing:-.03em;margin:0 0 5px}.editor-header p{font-size:12px;color:var(--muted);margin:0;line-height:1.6}
+.editor-close{width:40px;height:40px;flex:none;background:#29312a;border:1px solid var(--line);color:var(--text);font-size:24px;border-radius:12px;cursor:pointer}
+.editor-content{padding:20px 22px;min-height:0;overflow-y:auto;overscroll-behavior:contain;scrollbar-gutter:stable}
+.editor-content h3{font-size:15px;line-height:1.5;margin:22px 0 10px}.editor-content h3:first-child{margin-top:0}
+.editor-hint{font-size:12px;line-height:1.7;color:var(--muted);margin:8px 0 12px}
+.editor-field{display:flex;flex-direction:column;gap:6px;min-width:0;font-size:12px;line-height:1.6;color:var(--text)}
+.editor-field>span{font-weight:650}.editor-field small{font-size:11px;line-height:1.5;color:var(--muted)}
+.editor-field input,.editor-field select{width:100%;min-width:0;background:#0f1610;color:var(--text);border:1px solid #425044;border-radius:9px;padding:10px 11px;min-height:44px;font-size:16px}
+.editor-field input:focus,.editor-field select:focus{border-color:var(--lime)}
+.editor-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px 14px}.editor-grid .wide{grid-column:1/-1}
+.editor-check{display:flex;gap:10px;align-items:flex-start;font-size:12px;line-height:1.7;color:var(--muted);padding:4px 0;cursor:pointer}.editor-check input{width:18px;height:18px;margin:2px 0 0;flex:none;accent-color:var(--lime)}
+.library-actions{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}
+.library-actions button,.exercise-actions button,.add-exercise,.restore-preset{background:#252e26;color:var(--text);border:1px solid #3a463b;border-radius:9px;padding:9px 12px;min-height:42px;font-size:12px;cursor:pointer}
+.library-actions .danger,.exercise-actions .danger{color:#ffbcac}
+.exercise-editor{margin-top:12px;background:#1e2720;border:1px solid #39463b;border-radius:14px;overflow:hidden}
+.exercise-editor>summary{display:flex;align-items:center;gap:9px;list-style:none;cursor:pointer;padding:13px 14px;min-height:48px;position:relative;padding-right:32px}
+.exercise-editor>summary::-webkit-details-marker{display:none}.exercise-editor>summary:after{content:'＋';position:absolute;right:13px;color:var(--muted)}.exercise-editor[open]>summary:after{content:'−'}
+.exercise-number{display:grid;place-items:center;flex:none;min-width:25px;height:25px;border-radius:7px;background:#c9f36a14;color:var(--lime);font-size:12px;font-weight:750}
+.exercise-heading{font-size:14px;font-weight:750;overflow-wrap:anywhere}.exercise-kind{margin-left:auto;flex:none;font-size:10px;color:var(--muted)}
+.exercise-body{padding:0 14px 14px}.exercise-actions{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 14px}.exercise-actions button{min-height:36px;padding:7px 10px}
+.exercise-preview{font-size:11px;line-height:1.8;color:var(--lime);background:#101a10;padding:10px 12px;border-radius:9px;margin:14px 0 0;overflow-wrap:anywhere}
+.add-exercise{display:block;width:100%;margin-top:12px;border-style:dashed;color:var(--lime);min-height:46px}.restore-preset{font-size:11px;margin-top:14px;background:transparent;color:var(--muted)}
+.editor-error{padding:10px 12px;border:1px solid #b15e47;border-radius:9px;background:#35201b;color:#ffc7b6;font-size:12px;line-height:1.7;margin:0 0 10px}.editor-error[hidden]{display:none}
+.editor-footer{flex:none;border-top:1px solid var(--line);padding:13px 22px 18px;background:#171e18}
+.menu-estimate{font-size:12px;color:var(--lime);line-height:1.6;margin:0 0 10px}.editor-footer-actions{display:flex;gap:9px}.editor-footer button{border:0;border-radius:11px;min-height:44px;padding:11px 15px;font-size:13px;font-weight:750;cursor:pointer}.editor-footer .primary{flex:1;min-width:0}
+@media(max-width:600px){
+  header{gap:7px}.edit-menu-button{font-size:10px;padding:6px 9px;min-height:32px}
+  .current-exercise{grid-template-columns:minmax(0,1fr) auto}.title,.upcoming-title{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}.next-action strong{overflow-wrap:anywhere}
+  .menu-editor{width:calc(100% - 12px);max-height:calc(100svh - 12px);border-radius:16px}.menu-editor form{height:calc(100svh - 12px);max-height:calc(100svh - 12px)}
+  .editor-header{padding:15px 14px 12px;gap:10px}.editor-header h2{font-size:19px}.editor-header p{font-size:11px}.editor-content{padding:15px 12px;scrollbar-gutter:auto}
+  .editor-grid{gap:12px 9px}.editor-field{font-size:11px}.editor-field small{font-size:10px}.editor-field input,.editor-field select{padding:9px;min-height:44px}
+  .exercise-editor>summary{padding-left:11px;gap:7px;flex-wrap:wrap}.exercise-kind{font-size:9px;margin-left:34px;width:100%;margin-top:-3px}.exercise-body{padding:0 11px 12px}
+  .exercise-actions{gap:5px}.exercise-actions button{min-height:40px;padding:7px 9px}.editor-footer{padding:11px 12px max(12px,env(safe-area-inset-bottom))}.editor-close{width:36px;height:36px}
+}
+
+/* Connected blocks: color identifies the type; indents show the loop body. */
+.menu-editor{width:min(920px,calc(100% - 24px))}
+.builder-library,.builder-help{border:1px solid var(--line);border-radius:12px;background:#1c261e;margin-bottom:10px;padding:11px 13px}
+.builder-library>summary,.builder-help>summary{cursor:pointer;font-size:12px;color:var(--muted);line-height:1.6}
+.builder-library[open]>summary{margin-bottom:12px}.builder-library .editor-field{margin-top:12px}.builder-help p{font-size:11px;line-height:1.9;color:var(--muted)}
+.builder-toolbar{position:sticky;top:-1px;z-index:4;background:#171e18f5;backdrop-filter:blur(8px);padding:9px 0 7px;border-bottom:1px solid var(--line);margin-bottom:14px}
+.builder-tool-heading{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}.builder-tool-heading>strong{font-size:13px}
+.history-buttons{display:flex;gap:5px}.history-buttons button,.move-bar button{font-size:11px;color:var(--text);background:#2c382e;border:1px solid #425346;border-radius:8px;padding:7px 9px;min-height:34px;cursor:pointer}
+.block-palette,.inline-palette{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:9px}
+.part-exercise{--part-line:#75b7ff;--part-fill:#20324a;--part-ink:#bbdcff}.part-work{--part-line:#97d774;--part-fill:#293c24;--part-ink:#d0efbb}.part-rest{--part-line:#6bd6c9;--part-fill:#1b3a37;--part-ink:#b4eee6}.part-loop{--part-line:#ffb05c;--part-fill:#4a351f;--part-ink:#ffe0b6}.part-prepare{--part-line:#c7a0ff;--part-fill:#372944;--part-ink:#e5d3ff}
+.part-loop.loop-intervals{--part-line:#65beff;--part-fill:#173650;--part-ink:#c1e6ff}.part-loop.loop-sets{--part-line:#ffb05c;--part-fill:#4a351f;--part-ink:#ffe0b6}.part-loop.loop-repeat{--part-line:#d6a5e9;--part-fill:#3d2947;--part-ink:#f0d5fc}.part-loop.loop-rounds{--part-line:#e7ce70;--part-fill:#413a20;--part-ink:#f4e6aa}
+.loop-legend{display:flex;gap:5px 14px;flex-wrap:wrap;margin:8px 0 0;font-size:10px;line-height:1.5;color:var(--muted)}.loop-legend strong{color:var(--part-ink)}.loop-legend strong:before{content:'';display:inline-block;width:8px;height:8px;border-radius:2px;background:var(--part-line);margin-right:4px}
+.palette-part{background:var(--part-fill);border:1px solid var(--part-line);color:var(--part-ink);border-radius:8px 8px 8px 3px;font-size:12px;font-weight:700;min-height:38px;padding:8px 11px;cursor:pointer}
+.insert-target{font-size:10px;line-height:1.6;color:var(--muted);margin:7px 0 0}
+.program-cap{display:inline-block;background:#d7eb9b;color:#202d12;font-size:11px;font-weight:750;border-radius:16px 16px 4px 4px;padding:9px 17px}.program-finish{border-radius:4px 4px 16px 16px;padding:8px 17px;margin-top:2px}
+.block-canvas{min-width:0;padding-top:2px}
+.program-block{min-width:0;position:relative;background:var(--part-fill);border:1px solid var(--part-line);border-left:5px solid var(--part-line);border-radius:8px;color:var(--text)}
+.program-block:before{content:'';position:absolute;top:-5px;left:22px;width:28px;height:5px;background:var(--part-fill);border:1px solid var(--part-line);border-bottom:0;border-radius:4px 4px 0 0}
+.block-top{display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:6px 8px;border-bottom:1px solid #ffffff0d}
+.block-kind{font-size:11px;font-weight:800;color:var(--part-ink)}
+.loop-summary{flex:0 0 100%;min-width:0;padding:3px 4px 4px;font-size:13px;line-height:1.6;color:var(--part-ink);overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
+.drag-handle{font-size:21px;line-height:1;min-width:30px;min-height:34px;cursor:grab;background:transparent;color:var(--part-ink);border:0;border-radius:5px}
+.drag-handle:active{cursor:grabbing}.block-actions{display:flex;gap:4px;flex-wrap:wrap;margin-left:auto}
+.block-actions button{color:var(--part-ink);background:#0002;border:1px solid #ffffff26;border-radius:6px;min-height:32px;min-width:30px;padding:5px 8px;font-size:10px;cursor:pointer}.block-actions button.danger{color:#ffc5b6}
+.block-settings{padding:9px 11px}.block-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.block-grid .wide{grid-column:1/-1}
+.block-field{display:flex;flex-direction:column;gap:4px;min-width:0;font-size:10px;line-height:1.5;color:var(--part-ink)}
+.block-field input,.block-field select{box-sizing:border-box;min-width:0;max-width:100%;width:100%;min-height:40px;padding:7px 9px;background:#080e0ea8;color:var(--text);border:1px solid #ffffff35;border-radius:7px;font-size:16px}
+.block-field input[type=number]{max-width:150px}.block-field input:focus,.block-field select:focus{border-color:var(--part-line)}
+.loop-description,.loop-rest-note{font-size:10px;line-height:1.7;color:var(--part-ink);margin:0 0 9px}.loop-rest-note{margin:8px 0 0;color:var(--muted)}
+.work-rest-summary{font-size:11px;color:var(--part-ink);line-height:1.7;margin:9px 0 0}
+.block-options{font-size:10px;color:var(--part-ink);margin-top:9px}.block-options>summary{cursor:pointer;line-height:1.6}.block-options[open]>summary{margin-bottom:8px}.block-options p{font-size:10px;line-height:1.7;color:var(--muted)}
+.block-children{min-width:0;margin-left:11px;padding:7px 8px 9px 12px;background:#101711;border-left:3px solid var(--part-line);border-top-left-radius:8px;border-bottom-left-radius:8px}
+.block-end{padding:6px 12px;font-size:10px;color:var(--part-ink);min-height:24px}.folded-summary{font-size:11px;color:var(--muted);margin:4px 0}
+.insert-zone{min-width:0;position:relative;padding:2px 0}
+.insert-slot{display:block;width:100%;border:1px dashed #5a725144;border-radius:7px;background:transparent;color:#829478;font-size:11px;line-height:1.4;min-height:23px;cursor:pointer;padding:2px 8px}
+.insert-slot:hover,.insert-slot:focus-visible,.insert-zone.selected>.insert-slot{background:#b8e58117;border-color:var(--lime);color:var(--lime)}
+.insert-zone.selected{padding-bottom:8px}.inline-palette{background:#17231a;border:1px solid #506341;padding:9px;border-radius:10px;margin:4px 0 0}.inline-palette>span{font-size:10px;color:var(--muted);width:100%}.inline-palette .palette-part{font-size:11px;min-height:34px;padding:6px 9px}
+.palette-close{margin-left:auto;color:var(--muted);font-size:18px;border:0;border-radius:6px;background:transparent;min-width:32px;min-height:32px;cursor:pointer}
+.move-bar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;background:#20374b;border:1px solid #73b8f9;color:#c7e4ff;border-radius:8px;padding:8px;margin-top:8px;font-size:11px;line-height:1.5}.move-bar[hidden]{display:none}
+.moving-block{outline:2px solid var(--blue);outline-offset:1px;opacity:.6}.move-zone>.insert-slot,.dragging .insert-slot{min-height:32px;border-color:#85bce784;color:var(--blue);background:#90c9ff0a}
+.insert-slot.drag-over{background:#90c9ff33;border:2px solid var(--blue);color:#fff}.insert-slot:disabled{opacity:.15;cursor:not-allowed}
+.visually-hidden{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+@media(max-width:600px){
+  .menu-editor{width:calc(100% - 10px)}.editor-content{padding:10px 8px}.builder-library,.builder-help{padding:9px 10px}
+  .builder-toolbar{padding:7px 0}.builder-tool-heading>strong{font-size:12px}.history-buttons button{font-size:10px;padding:6px;min-height:34px}
+  .block-palette{gap:4px}.palette-part{font-size:11px;padding:7px 8px;min-height:40px}
+  .block-top{padding:5px;gap:4px}.block-actions{gap:3px}.block-actions button{font-size:10px;min-height:36px;padding:5px 6px}.drag-handle{min-height:36px;min-width:26px}
+  .block-settings{padding:8px}.block-children{margin-left:5px;padding-left:5px;padding-right:3px;border-left-width:3px}.program-block{border-left-width:4px}
+  .block-grid{grid-template-columns:minmax(0,1fr)}.block-grid .wide{grid-column:auto}.block-field input,.block-field select{min-height:42px}.insert-slot{min-height:27px}
+  .inline-palette{padding:7px;gap:4px}.inline-palette .palette-part{min-height:40px;font-size:10px;padding:6px}.move-zone>.insert-slot{min-height:38px}
+}
+</style>
+</head>
+<body>
+<main>
+  <header><div><div class="eyebrow">TRAINING TIMER</div><h1 id="menuTitle">ボルダリング</h1></div><button type="button" class="badge edit-menu-button" id="editMenu">メニューを編集</button></header>
+  <section class="timer" id="timer" aria-live="polite">
+    <div class="sectionline"><span class="phase" id="phase">READY</span><div class="session-meta"><span class="elapsed" id="elapsed">経過 00:00</span><span class="wake-status" id="wakeStatus" role="status"></span></div></div>
+    <div class="current-exercise"><span class="now-label">今の種目</span>
+    <div class="title" id="title">指ぶら下がり</div><div class="detail" id="detail">2000 下段</div></div>
+    <div class="metrics">
+      <div class="metric"><span class="metric-label" id="setLabel">セット</span><strong class="metric-value" id="setValue">1 <small>/ 4</small></strong><span class="metric-note" id="setNote">全4セット</span></div>
+      <div class="metric"><span class="metric-label" id="intervalLabel">インターバル</span><strong class="metric-value" id="intervalValue">1 <small>/ 6</small></strong><span class="metric-note" id="intervalNote">7秒保持 ＋ 3秒レスト</span></div>
+    </div>
+    <div class="dial" id="dial"><svg viewBox="0 0 100 100" aria-hidden="true"><circle class="track" cx="50" cy="50" r="44"/><circle class="arc" id="arc" cx="50" cy="50" r="44"/></svg><button type="button" class="clock timer-toggle" id="toggle" aria-label="タイマーを開始" aria-pressed="false"><strong id="clock">00:07</strong><span id="clockLabel">次の動作まで</span><span class="clock-action" id="toggleLabel">タップして開始</span></button></div>
+    <div class="cue" id="cue">準備ができたら <em>スタート</em></div>
+    <div class="upcoming"><div class="upcoming-label">次の種目</div><div class="upcoming-title" id="nextExercise">普通懸垂</div><div class="upcoming-note" id="nextExerciseNote">指ぶら下がり4セット ＋ 5分休憩のあと</div><div class="next-action">次の動作：<strong id="nextAction">3秒レスト</strong></div></div>
+    <div class="progress"><i id="progress"></i></div><div class="counts"><span id="count">全体 0 / 0</span><span id="next">—</span></div>
+    <div class="controls"><button type="button" class="secondary" id="reset">↺ 最初から</button><button type="button" class="secondary" id="skip">次へ ↠</button></div>
+  </section>
+  <p class="storage-notice" id="storageNotice" role="status" hidden></p>
+  <details class="workout"><summary>メニュー・使い方</summary><p class="menu-description" id="activeMenuDescription"></p><div class="steps" id="steps"></div><p class="note">中央タップで開始・一時停止。回数のみの種目は、動作が終わったら「完了して次へ」を押してください。「回数＋制限時間」は開始時に指定回数を行い、残り時間をレストに使います。対応ブラウザでは実行中のスリープを防止します。作ったメニューはこのブラウザ内に保存されます。</p></details>
+  <div class="footer">タップで開始・一時停止　 · 　↠ で次のフェーズへ</div>
+</main>
+<dialog class="menu-editor" id="menuEditor" aria-labelledby="editorTitle" aria-describedby="editorDescription">
+  <form id="menuForm" novalidate>
+    <div class="editor-header"><div><h2 id="editorTitle">パーツでメニューを組む</h2><p id="editorDescription">動作＋休憩をインターバルでくり返し、セットでまとめます。</p></div><button type="button" class="editor-close" id="closeEditor" aria-label="編集をキャンセルして閉じる">×</button></div>
+    <div class="editor-content">
+      <details class="builder-library">
+        <summary id="librarySummary">保存メニュー・名前・音の設定</summary>
+        <label class="editor-field" for="menuSelect"><span>保存したメニューを選ぶ</span><select id="menuSelect"></select></label>
+        <div class="library-actions"><button type="button" id="newMenu">＋ 新規</button><button type="button" id="duplicateMenu">メニューを複製</button><button type="button" class="danger" id="deleteMenu">メニューを削除</button></div>
+        <label class="editor-field" for="menuName"><span>メニュー名</span><input id="menuName" maxlength="40" required></label>
+        <label class="editor-check"><input id="menuSound" type="checkbox" checked><span>動作・休憩の切り替え音を鳴らす</span></label>
+      </details>
+      <details class="builder-help"><summary>組み立て方を見る</summary><p>① オレンジの「セット」を追加してセット数・セット間休憩を設定<br>② その中の「＋」で青の「インターバル」を追加して回数を設定<br>③ インターバルの中に「動作」を入れ、動作時間・動作後の休憩時間を設定</p><p>例：セット4回（セット間休憩120秒）→ インターバル6回 → 動作7秒・休憩3秒。1セットは1分で、セット間に2分休みます。最後のセット後にセット間休憩は入りません。休憩0秒なら動作後すぐ次へ進みます。</p><p>インターバルの追加休憩は通常0秒で使います。動作後の休憩は最後の回にも入り、独立した休憩パーツは追加の休憩として使えます。「回数＋制限時間」は持ち時間が終わってから休憩に進みます。</p><p>自由な構成には「くり返し」を使えます。「移動」→置きたい位置をタップでつなぎ替え、「外す」で取り外し、「元に戻す」で復元できます。パソコンでは⠿をドラッグして移動できます。</p></details>
+      <div class="builder-toolbar"><div class="builder-tool-heading"><strong>パーツを追加</strong><div class="history-buttons"><button type="button" id="undoBlock" disabled>↶ 元に戻す</button><button type="button" id="redoBlock" disabled>↷ やり直す</button></div></div><div class="block-palette" id="blockPalette"></div><p class="loop-legend"><span><strong class="part-loop loop-intervals">インターバル</strong>動作＋休憩のくり返し</span><span><strong class="part-loop loop-sets">セット</strong>そのまとまりのくり返し</span></p><p class="insert-target" id="insertTarget"></p><div class="move-bar" id="moveBar" hidden><span id="moveMessage"></span><button type="button" id="cancelMove">移動をやめる</button></div></div>
+      <div class="program-cap">▶ スタート</div>
+      <div class="block-canvas" id="blockCanvas" role="group" aria-label="メニューのブロック"></div>
+      <div class="program-cap program-finish">■ おわり</div>
+      <p class="visually-hidden" id="builderNotice" role="status" aria-live="polite"></p>
+      <button type="button" class="restore-preset" id="restorePreset">初期のボルダリングメニューを追加する</button>
+      <p class="editor-hint">保存先はこのブラウザです。「保存して使う」でタイマーを最初に戻します。キャンセルすると今回の編集を破棄します。</p>
+    </div>
+    <div class="editor-footer"><p class="editor-error" id="editorError" role="alert" hidden></p><p class="menu-estimate" id="menuEstimate" aria-live="polite"></p><div class="editor-footer-actions"><button type="button" class="secondary" id="cancelEditor">キャンセル</button><button type="submit" class="primary">保存して使う</button></div></div>
+  </form>
+</dialog>
+<script>
+'use strict';
+
+const WorkoutModel = (() => {
+  const KINDS = { timed: '時間で行う', reps: '回数＋制限時間', manual: '回数のみ・手動で完了', rest: '休憩のみ' };
+  const uid = () => typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : `id-${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`;
+  const clone = value => JSON.parse(JSON.stringify(value));
+
+  function newExercise(kind = 'timed') {
+    return { id: uid(), kind, name: kind === 'rest' ? '休憩' : '', note: '', prepareSeconds: 0, workSeconds: 30, reps: 5, cycles: 1, cycleRestSeconds: 0, includeLastRest: false, sets: 1, setRestSeconds: 0, afterRestSeconds: 0 };
+  }
+
+  function legacyNewMenu() {
+    return { id: uid(), name: '新しいメニュー', prepareSeconds: 0, rounds: 1, roundRestSeconds: 0, soundEnabled: true, exercises: [newExercise()] };
+  }
+
+  function legacyDefaultMenu() {
+    return {
+      id: 'default-bouldering', name: 'ボルダリング', prepareSeconds: 0, rounds: 1, roundRestSeconds: 0, soundEnabled: true,
+      exercises: [
+        { ...newExercise(), id: 'finger-hang', name: '指ぶら下がり', note: '2000 下段', workSeconds: 7, cycles: 6, cycleRestSeconds: 3, includeLastRest: true, sets: 4, setRestSeconds: 120, afterRestSeconds: 300 },
+        { ...newExercise('reps'), id: 'pull-up', name: '普通懸垂', note: '2000 中段・順手', workSeconds: 60, reps: 5, sets: 10 },
+        { ...newExercise('reps'), id: 'chin-up', name: '逆手懸垂', note: '逆手', workSeconds: 60, reps: 5, sets: 10 }
+      ]
+    };
+  }
+
+  function text(value, label, max, required = false) {
+    const result = typeof value === 'string' ? value.trim() : '';
+    if (required && !result) throw new Error(`${label}を入力してください。`);
+    if (result.length > max) throw new Error(`${label}は${max}文字以内で入力してください。`);
+    return result;
+  }
+
+  function integer(value, label, min, max) {
+    if (!Number.isInteger(value) || value < min || value > max) throw new Error(`${label}は${min}〜${max}の整数で入力してください。`);
+    return value;
+  }
+
+  function validateLegacyMenu(input) {
+    if (!input || typeof input !== 'object') throw new Error('メニューを読み込めません。');
+    const menu = {
+      id: text(input.id, 'メニューID', 100, true),
+      name: text(input.name, 'メニュー名', 40, true),
+      prepareSeconds: integer(input.prepareSeconds, '開始前の準備時間', 0, 3600),
+      rounds: integer(input.rounds, 'メニュー全体の周回数', 1, 99),
+      roundRestSeconds: integer(input.roundRestSeconds, '周回間の休憩時間', 0, 3600), soundEnabled: input.soundEnabled !== false, exercises: []
+    };
+    if (!Array.isArray(input.exercises) || !input.exercises.length || input.exercises.length > 50) throw new Error('種目は1〜50個で設定してください。');
+    const seen = new Set();
+    for (const [i, raw] of input.exercises.entries()) {
+      if (!raw || !KINDS[raw.kind]) throw new Error(`種目${i + 1}のタイプを選んでください。`);
+      const prefix = `種目${i + 1}：`;
+      const exercise = {
+        id: text(raw.id, prefix + 'ID', 100, true), kind: raw.kind,
+        name: text(raw.name, prefix + '種目名', 40, true), note: text(raw.note, prefix + 'メモ', 100),
+        prepareSeconds: raw.kind === 'rest' ? 0 : integer(raw.prepareSeconds, prefix + '準備時間', 0, 3600),
+        workSeconds: raw.kind === 'manual' ? 0 : integer(raw.workSeconds, prefix + (raw.kind === 'rest' ? '休憩時間' : '動作時間'), 1, 7200),
+        reps: ['reps', 'manual'].includes(raw.kind) ? integer(raw.reps, prefix + '動作回数', 1, 999) : 0,
+        cycles: raw.kind === 'rest' ? 1 : integer(raw.cycles, prefix + 'インターバル回数', 1, 99),
+        cycleRestSeconds: raw.kind === 'rest' ? 0 : integer(raw.cycleRestSeconds, prefix + 'インターバル休憩', 0, 3600),
+        includeLastRest: Boolean(raw.includeLastRest),
+        sets: raw.kind === 'rest' ? 1 : integer(raw.sets, prefix + 'セット数', 1, 99),
+        setRestSeconds: raw.kind === 'rest' ? 0 : integer(raw.setRestSeconds, prefix + 'セット間休憩', 0, 3600),
+        afterRestSeconds: raw.kind === 'rest' ? 0 : integer(raw.afterRestSeconds, prefix + '種目終了後の休憩', 0, 7200)
+      };
+      if (seen.has(exercise.id)) throw new Error('種目のIDが重複しています。種目を作り直してください。');
+      seen.add(exercise.id);
+      menu.exercises.push(exercise);
+    }
+    return menu;
+  }
+
+  function compileLegacyMenu(input) {
+    const menu = validateLegacyMenu(input), phases = [];
+    function add(meta, type, duration, extra = {}) {
+      if (phases.length >= 20000) throw new Error('メニューが大きすぎます。インターバル数・セット数・周回数を減らしてください。');
+      phases.push({ ...meta, type, duration, ...extra });
+    }
+    for (let round = 1; round <= menu.rounds; round++) {
+      for (let exerciseIndex = 0; exerciseIndex < menu.exercises.length; exerciseIndex++) {
+        const e = menu.exercises[exerciseIndex];
+        const meta = { exerciseId: e.id, exerciseIndex, exercise: e.name, note: e.note, kind: e.kind, round, roundTotal: menu.rounds, set: 1, setTotal: e.sets, cycle: 1, cycleTotal: e.cycles, reps: e.reps, workSeconds: e.workSeconds, cycleRestSeconds: e.cycleRestSeconds };
+        if (round === 1 && exerciseIndex === 0 && menu.prepareSeconds) add(meta, 'prepare', menu.prepareSeconds, { preparation: 'menu' });
+        if (e.prepareSeconds) add(meta, 'prepare', e.prepareSeconds, { preparation: 'exercise' });
+        if (e.kind === 'rest') { add(meta, 'rest', e.workSeconds); continue; }
+        for (let set = 1; set <= e.sets; set++) {
+          for (let cycle = 1; cycle <= e.cycles; cycle++) {
+            const current = { ...meta, set, cycle };
+            add(current, 'work', e.kind === 'manual' ? null : e.workSeconds);
+            if (e.cycleRestSeconds && (cycle < e.cycles || e.includeLastRest)) add(current, 'intervalRest', e.cycleRestSeconds);
+          }
+          if (set < e.sets && e.setRestSeconds) add({ ...meta, set, cycle: e.cycles }, 'setRest', e.setRestSeconds);
+        }
+        if (e.afterRestSeconds) add({ ...meta, set: e.sets, cycle: e.cycles }, 'exerciseRest', e.afterRestSeconds);
+      }
+      if (round < menu.rounds && menu.roundRestSeconds) {
+        const last = menu.exercises[menu.exercises.length - 1];
+        add({ exerciseId: last.id, exerciseIndex: menu.exercises.length - 1, exercise: '周回間の休憩', note: '', kind: 'rest', round, roundTotal: menu.rounds, set: 1, setTotal: 1, cycle: 1, cycleTotal: 1, reps: 0 }, 'roundRest', menu.roundRestSeconds);
+      }
+    }
+    const seconds = phases.reduce((sum, phase) => sum + (phase.duration || 0), 0);
+    if (seconds > 7 * 86400) throw new Error('メニューの合計時間が長すぎます。7日以内で設定してください。');
+    return { menu, phases, seconds, manualCount: phases.filter(phase => phase.duration === null).length };
+  }
+
+  function durationText(seconds) {
+    const hours = Math.floor(seconds / 3600), minutes = Math.floor(seconds % 3600 / 60), rest = seconds % 60;
+    return [hours ? `${hours}時間` : '', minutes ? `${minutes}分` : '', rest ? `${rest}秒` : ''].join('') || '0秒';
+  }
+
+  function exerciseSummary(e) {
+    if (e.kind === 'rest') return `${durationText(e.workSeconds)}休憩`;
+    const action = e.kind === 'manual' ? `${e.reps}回・手動完了` : e.kind === 'reps' ? `${durationText(e.workSeconds)}ごとに${e.reps}回` : `${durationText(e.workSeconds)}動作`;
+    const parts = [action, e.cycleRestSeconds ? `休憩${durationText(e.cycleRestSeconds)}` : '', `${e.cycles}インターバル × ${e.sets}セット`, e.setRestSeconds && e.sets > 1 ? `セット間${durationText(e.setRestSeconds)}` : '', e.afterRestSeconds ? `終了後${durationText(e.afterRestSeconds)}休憩` : ''];
+    return parts.filter(Boolean).join(' / ');
+  }
+
+  const BLOCKS = { exercise: '種目', work: '動作', rest: '休憩', loop: 'くり返し', prepare: '準備' };
+  const LOOP_ROLES = { sets: 'セット', intervals: 'インターバル', rounds: '周回', repeat: 'くり返し' };
+
+  function newBlock(type) {
+    const id = uid();
+    if (type === 'exercise') return { id, type, name: '新しい種目', note: '', children: [newBlock('work')] };
+    if (type === 'loop') return { id, type, count: 3, role: 'repeat', betweenRestSeconds: 0, children: [] };
+    if (type === 'work') return { id, type, name: '', note: '', mode: 'timed', seconds: 30, restSeconds: 0, reps: 5 };
+    if (type === 'rest' || type === 'prepare') return { id, type, name: '', seconds: type === 'rest' ? 30 : 5, restType: 'rest' };
+    throw new Error('追加できないブロックです。');
+  }
+
+  function toBlocks(input) {
+    if (Array.isArray(input?.blocks)) {
+      const menu = clone(input);
+      const upgrade = nodes => {
+        for (let i = 0; i < nodes.length; i++) {
+          const node = nodes[i];
+          if (node?.children) upgrade(node.children);
+          if (node?.type !== 'work' || node.restSeconds !== undefined) continue;
+          node.restSeconds = 0;
+          const next = nodes[i + 1];
+          // Earlier presets stored the action's interval rest as a separate block.
+          if (next?.type === 'rest' && next.restType === 'intervalRest' && !next.name) {
+            node.restSeconds = next.seconds;
+            nodes.splice(i + 1, 1);
+          }
+        }
+      };
+      upgrade(menu.blocks);
+      return menu;
+    }
+    const old = validateLegacyMenu(input), blocks = [];
+    for (const exercise of old.exercises) {
+      const suffix = label => `${exercise.id}-${label}`;
+      if (exercise.kind === 'rest') {
+        blocks.push({ ...newBlock('rest'), id: exercise.id, name: exercise.name, seconds: exercise.workSeconds });
+        continue;
+      }
+      const work = { ...newBlock('work'), id: suffix('action'), mode: exercise.kind, seconds: exercise.workSeconds || 30, restSeconds: exercise.includeLastRest ? exercise.cycleRestSeconds : 0, reps: exercise.reps || 5 };
+      const cycle = { ...newBlock('loop'), id: suffix('intervals'), count: exercise.cycles, role: 'intervals', betweenRestSeconds: exercise.includeLastRest ? 0 : exercise.cycleRestSeconds, children: [work] };
+      const sets = { ...newBlock('loop'), id: suffix('sets'), count: exercise.sets, role: 'sets', betweenRestSeconds: exercise.setRestSeconds, children: [cycle] };
+      const group = { ...newBlock('exercise'), id: exercise.id, name: exercise.name, note: exercise.note, children: [] };
+      if (exercise.prepareSeconds) group.children.push({ ...newBlock('prepare'), id: suffix('prepare'), seconds: exercise.prepareSeconds });
+      group.children.push(sets);
+      if (exercise.afterRestSeconds) group.children.push({ ...newBlock('rest'), id: suffix('after'), seconds: exercise.afterRestSeconds, restType: 'exerciseRest' });
+      blocks.push(group);
+    }
+    const body = old.rounds > 1 ? [{ ...newBlock('loop'), count: old.rounds, role: 'rounds', betweenRestSeconds: old.roundRestSeconds, children: blocks }] : blocks;
+    if (old.prepareSeconds) body.unshift({ ...newBlock('prepare'), seconds: old.prepareSeconds, preparation: 'menu' });
+    return { id: old.id, version: 2, name: old.name, soundEnabled: old.soundEnabled, blocks: body };
+  }
+
+  function defaultMenu() { return toBlocks(legacyDefaultMenu()); }
+  function newMenu() { return { id: uid(), version: 2, name: '新しいメニュー', soundEnabled: true, blocks: [newBlock('exercise')] }; }
+
+  function countBlocks(blocks) { return blocks.reduce((sum, node) => sum + 1 + (node.children ? countBlocks(node.children) : 0), 0); }
+  function findBlock(blocks, id, parentId = null) {
+    for (let index = 0; index < blocks.length; index++) {
+      const node = blocks[index];
+      if (node.id === id) return { node, list: blocks, index, parentId };
+      if (node.children) { const result = findBlock(node.children, id, node.id); if (result) return result; }
+    }
+    return null;
+  }
+  function childrenAt(blocks, parentId) {
+    if (!parentId) return blocks;
+    const target = findBlock(blocks, parentId)?.node;
+    if (!target?.children) throw new Error('種目かくり返しの中に配置してください。');
+    return target.children;
+  }
+  function canMove(blocks, id, parentId) {
+    const node = findBlock(blocks, id)?.node;
+    return Boolean(node && id !== parentId && (!node.children || !parentId || !findBlock(node.children, parentId)));
+  }
+  function moveBlock(blocks, id, parentId, position) {
+    const source = findBlock(blocks, id);
+    if (!source || !canMove(blocks, id, parentId)) throw new Error('ブロックを自分自身の中には移動できません。');
+    const target = childrenAt(blocks, parentId);
+    if (!Number.isInteger(position) || position < 0 || position > target.length) throw new Error('移動先を選び直してください。');
+    const adjusted = source.list === target && source.index < position ? position - 1 : position;
+    if (source.list === target && source.index === adjusted) return false;
+    source.list.splice(source.index, 1); target.splice(adjusted, 0, source.node);
+    return true;
+  }
+  function duplicateBlock(node) {
+    const copy = clone(node);
+    const walk = item => { item.id = uid(); item.children?.forEach(walk); };
+    walk(copy); return copy;
+  }
+  function blockTitle(node) {
+    if (node.type === 'loop') {
+      const count = Number.isInteger(node.count) ? node.count : '—';
+      const title = { sets: `${count}セット`, intervals: `インターバル ${count}回`, rounds: `${count}周`, repeat: `${count}回くり返す` }[node.role] || `${count}回くり返す`;
+      const rest = Number.isFinite(node.betweenRestSeconds) ? durationText(node.betweenRestSeconds) : '—秒';
+      const restLabel = { sets: 'セット間休憩', intervals: '各回の間に追加休憩', rounds: '周回間休憩', repeat: 'くり返し間休憩' }[node.role] || 'くり返し間休憩';
+      return `${title} ・ ${restLabel}${rest}`;
+    }
+    if (node.type === 'exercise') return node.name || '種目名未入力';
+    if (node.type === 'work') return node.name || (node.mode === 'manual' ? `${node.reps}回の動作` : `${node.seconds}秒の動作`) + ` ＋ 休憩${node.restSeconds || 0}秒`;
+    return node.name || `${node.seconds}秒の${BLOCKS[node.type]}`;
+  }
+
+  function validateMenu(input) {
+    const raw = toBlocks(input), seen = new Set();
+    let total = 0;
+    function visit(nodes, depth = 0) {
+      if (!Array.isArray(nodes) || !nodes.length) throw new Error('空の種目・くり返しにパーツを追加してください。');
+      if (depth > 10) throw new Error('入れ子が深すぎます。10段以内にしてください。');
+      return nodes.map(node => {
+        if (!node || !BLOCKS[node.type]) throw new Error('ブロックの種類を確認してください。');
+        if (++total > 300) throw new Error('ブロックは300個までにしてください。');
+        const id = text(node.id, 'ブロックID', 150, true), type = node.type;
+        if (seen.has(id)) throw new Error('ブロックIDが重複しています。'); seen.add(id);
+        if (type === 'loop') {
+          if (!LOOP_ROLES[node.role]) throw new Error('くり返しのカウント表示を選んでください。');
+          return { id, type, role: node.role, count: integer(node.count, 'くり返す回数', 1, 99), betweenRestSeconds: integer(node.betweenRestSeconds, 'くり返しの間の休憩', 0, 7200), children: visit(node.children, depth + 1) };
+        }
+        const name = text(node.name, type === 'exercise' ? '種目名' : 'ブロック名', 40, type === 'exercise');
+        if (type === 'exercise') return { id, type, name, note: text(node.note, 'メモ', 100), children: visit(node.children, depth + 1) };
+        if (type === 'work') {
+          if (!['timed', 'reps', 'manual'].includes(node.mode)) throw new Error('動作の方法を選んでください。');
+          return { id, type, name, note: text(node.note, 'メモ', 100), mode: node.mode, seconds: node.mode === 'manual' ? 0 : integer(node.seconds, '動作時間', 1, 7200), restSeconds: integer(node.restSeconds, '動作後の休憩時間', 0, 7200), reps: node.mode === 'timed' ? 0 : integer(node.reps, '動作回数', 1, 999) };
+        }
+        return { id, type, name, seconds: integer(node.seconds, type === 'prepare' ? '準備時間' : '休憩時間', 1, 7200), restType: ['intervalRest', 'setRest', 'exerciseRest'].includes(node.restType) ? node.restType : 'rest', preparation: node.preparation === 'menu' ? 'menu' : 'exercise' };
+      });
+    }
+    return { id: text(raw.id, 'メニューID', 100, true), version: 2, name: text(raw.name, 'メニュー名', 40, true), soundEnabled: raw.soundEnabled !== false, blocks: visit(raw.blocks) };
+  }
+
+  function compileMenu(input) {
+    const menu = validateMenu(input), phases = [], items = [], itemMap = new Map();
+    function add(node, context, type, duration, overrides = {}) {
+      if (phases.length >= 20000) throw new Error('回数が多すぎます。くり返す回数を減らしてください。');
+      const group = context.group, loops = context.loops || [];
+      const role = name => [...loops].reverse().find(loop => loop.role === name);
+      const other = loops.filter(loop => loop.role === 'repeat');
+      const set = role('sets') || other[0], cycle = role('intervals') || other[1], round = role('rounds');
+      const id = group?.id || node.id;
+      if (!itemMap.has(id)) { itemMap.set(id, items.length); items.push({ id, name: group?.name || node.name || BLOCKS[node.type], seconds: 0, manualCount: 0 }); }
+      const itemIndex = itemMap.get(id), item = items[itemIndex];
+      item.seconds += duration || 0; if (duration === null) item.manualCount++;
+      phases.push({
+        blockId: node.id, type, duration, exerciseId: id, exerciseIndex: itemIndex, exercise: item.name,
+        occurrenceId: context.occurrence || `${id}:${loops.map(loop => `${loop.id}-${loop.iteration}`).join('/')}`,
+        note: node.note || group?.note || '', action: node.name || group?.name || BLOCKS[node.type],
+        kind: type === 'work' ? node.mode : 'rest', workSeconds: node.seconds || 0, reps: node.reps || 0, cycleRestSeconds: node.restSeconds || 0,
+        round: round?.iteration || 1, roundTotal: round?.count || 1,
+        set: set?.iteration || 1, setTotal: set?.count || 1, setLabel: set?.role === 'repeat' ? 'くり返し' : 'セット',
+        cycle: cycle?.iteration || 1, cycleTotal: cycle?.count || 1, cycleLabel: cycle?.role === 'repeat' ? '内側のくり返し' : 'インターバル',
+        loops: loops.map(loop => ({ ...loop })), ...overrides
+      });
+    }
+    function walk(nodes, context = { loops: [] }) {
+      for (const node of nodes) {
+        if (node.type === 'exercise') {
+          const occurrence = `${node.id}:${context.loops.map(loop => `${loop.id}-${loop.iteration}`).join('/')}`;
+          walk(node.children, { ...context, group: node, occurrence });
+        } else if (node.type === 'loop') {
+          for (let iteration = 1; iteration <= node.count; iteration++) {
+            const loops = [...context.loops, { id: node.id, role: node.role, iteration, count: node.count }];
+            walk(node.children, { ...context, loops });
+            if (iteration < node.count && node.betweenRestSeconds) {
+              const previous = phases.at(-1), restType = { sets: 'setRest', intervals: 'intervalRest', rounds: 'roundRest', repeat: 'loopRest' }[node.role];
+              if (phases.length >= 20000) throw new Error('回数が多すぎます。くり返す回数を減らしてください。');
+              phases.push({ ...previous, blockId: node.id, type: restType, duration: node.betweenRestSeconds, loops, loopRestRole: node.role, workRest: false });
+              items[previous.exerciseIndex].seconds += node.betweenRestSeconds;
+            }
+          }
+        } else if (node.type === 'work') {
+          add(node, context, 'work', node.mode === 'manual' ? null : node.seconds);
+          if (node.restSeconds > 0) add(node, context, 'intervalRest', node.restSeconds, { workRest: true });
+        }
+        else if (node.type === 'prepare') add(node, context, 'prepare', node.seconds, { preparation: node.preparation });
+        else {
+          const previous = phases.at(-1), finished = {};
+          const restType = node.restType === 'exerciseRest' && context.group?.children.at(-1)?.id === node.id ? 'exerciseRest'
+            : node.restType === 'intervalRest' && context.loops.some(loop => loop.role === 'intervals') ? 'intervalRest'
+            : node.restType === 'setRest' && context.loops.some(loop => loop.role === 'sets') ? 'setRest' : 'rest';
+          if (restType === 'exerciseRest' && previous && previous.exerciseId === context.group?.id) {
+            for (const key of ['set', 'setTotal', 'setLabel', 'cycle', 'cycleTotal', 'cycleLabel', 'loops']) finished[key] = previous[key];
+          }
+          add(node, context, restType, node.seconds, finished);
+        }
+      }
+    }
+    walk(menu.blocks);
+    const seconds = phases.reduce((sum, phase) => sum + (phase.duration || 0), 0);
+    if (seconds > 7 * 86400) throw new Error('メニューの合計時間は7日以内にしてください。');
+    return { menu, phases, items, seconds, manualCount: phases.filter(phase => phase.duration === null).length };
+  }
+
+  function nextExercise(phases, index) {
+    const current = phases[index];
+    if (!current) return null;
+    if (current.type === 'prepare') return phases.slice(index + 1).find(phase => phase.type === 'work' || phase.type === 'rest') || null;
+    return phases.slice(index + 1).find(phase => (phase.type === 'work' || phase.type === 'rest') && (phase.exerciseId !== current.exerciseId || phase.occurrenceId !== current.occurrenceId)) || null;
+  }
+
+  return { KINDS, BLOCKS, LOOP_ROLES, uid, clone, newExercise, newMenu, defaultMenu, validateMenu, compileMenu, durationText, exerciseSummary, nextExercise, newBlock, toBlocks, countBlocks, findBlock, childrenAt, canMove, moveBlock, duplicateBlock, blockTitle, legacyDefaultMenu, compileLegacyMenu };
+})();
+
+if (typeof module !== 'undefined' && module.exports) module.exports = WorkoutModel;
+</script>
+<script>
+'use strict';
+
+(() => {
+  const M = WorkoutModel;
+  const $ = id => document.getElementById(id);
+  const escapeHTML = value => String(value).replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
+  const STORAGE_KEY = 'climbing-timer.menus.v2';
+  const CIRCLE = 2 * Math.PI * 44;
+  let library = [M.defaultMenu()], activeId = library[0].id, storageMessage = '';
+
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY) || localStorage.getItem('climbing-timer.menus.v1');
+    if (raw) {
+      const saved = JSON.parse(raw);
+      if (![1, 2].includes(saved.version) || !Array.isArray(saved.menus) || !saved.menus.length || saved.menus.length > 20) throw new Error('Invalid menu library');
+      const ids = new Set();
+      library = saved.menus.map(menu => {
+        const normalized = M.compileMenu(menu).menu;
+        if (ids.has(normalized.id)) throw new Error('Duplicate menu ID');
+        ids.add(normalized.id);
+        return normalized;
+      });
+      activeId = library.some(menu => menu.id === saved.activeId) ? saved.activeId : library[0].id;
+    }
+  } catch {
+    library = [M.defaultMenu()]; activeId = library[0].id;
+    storageMessage = '保存データを読み込めなかったため、初期メニューを表示しています。';
+  }
+
+  let compiled = M.compileMenu(library.find(menu => menu.id === activeId));
+  let phases = compiled.phases, index = 0, remaining = phases[0].duration;
+  let running = false, started = false, elapsed = 0, last = null, frame = 0, audio;
+  let screenLock = null, screenLockRequest = null;
+  let editorMenus = [], editorId = '';
+  $('arc').style.strokeDasharray = CIRCLE;
+
+  function clockText(seconds) {
+    const whole = Math.max(0, Math.ceil(seconds));
+    return `${String(Math.floor(whole / 60)).padStart(2, '0')}:${String(whole % 60).padStart(2, '0')}`;
+  }
+
+  function beep(long = false) {
+    if (!compiled.menu.soundEnabled) return;
+    try {
+      audio = audio || new (window.AudioContext || window.webkitAudioContext)();
+      if (audio.state === 'suspended') audio.resume().catch(() => {});
+      const oscillator = audio.createOscillator(), gain = audio.createGain();
+      oscillator.connect(gain); gain.connect(audio.destination);
+      oscillator.frequency.value = long ? 740 : 960;
+      gain.gain.setValueAtTime(0.001, audio.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.16, audio.currentTime + 0.015);
+      gain.gain.exponentialRampToValueAtTime(0.001, audio.currentTime + (long ? 0.28 : 0.12));
+      oscillator.start(); oscillator.stop(audio.currentTime + (long ? 0.3 : 0.14));
+    } catch {}
+  }
+
+  async function syncScreenLock() {
+    if (!running || document.visibilityState === 'hidden') {
+      $('wakeStatus').textContent = '';
+      if (screenLock) { const lock = screenLock; screenLock = null; try { await lock.release(); } catch {} }
+      return;
+    }
+    if (screenLock || screenLockRequest) return;
+    if (!('wakeLock' in navigator)) { $('wakeStatus').textContent = 'スリープ防止：非対応'; return; }
+    try {
+      screenLockRequest = navigator.wakeLock.request('screen');
+      const lock = await screenLockRequest;
+      if (!running || document.visibilityState === 'hidden') { await lock.release(); return; }
+      screenLock = lock; $('wakeStatus').textContent = 'スリープ防止中';
+      lock.addEventListener('release', () => {
+        if (screenLock === lock) { screenLock = null; $('wakeStatus').textContent = running ? 'スリープ防止が解除されました' : ''; }
+      });
+    } catch { if (running) $('wakeStatus').textContent = 'スリープ防止：利用不可'; }
+    finally { screenLockRequest = null; }
+  }
+
+  function syncToggle() {
+    const done = index >= phases.length;
+    $('toggle').disabled = done;
+    $('toggleLabel').textContent = done ? '完了' : running ? 'タップで一時停止' : started ? 'タップで再開' : 'タップして開始';
+    $('toggle').setAttribute('aria-label', done ? 'トレーニング完了' : running ? 'タイマーを一時停止' : 'タイマーを開始・再開');
+    $('toggle').setAttribute('aria-pressed', String(running));
+    syncScreenLock();
+  }
+
+  function phaseLabel(p) {
+    const time = M.durationText(p.duration || 0);
+    if (p.type === 'prepare') return `${time} 準備`;
+    if (p.workRest) return `動作後の休憩 ${time}`;
+    if (p.type === 'work') return p.kind === 'manual' ? `${p.reps}回・手動で完了` : p.kind === 'reps' ? `${time}ごとに${p.reps}回` : `${time} 動作`;
+    return ({ intervalRest: 'インターバル休憩', setRest: 'セット間休憩', exerciseRest: '種目終了後の休憩', roundRest: '周回間の休憩', loopRest: 'くり返しの間の休憩', rest: '休憩' }[p.type] || '休憩') + ` ${time}`;
+  }
+
+  function actionName(p) {
+    if (!p) return 'すべてのトレーニング完了';
+    if (p.type !== 'work') return phaseLabel(p);
+    const amount = p.kind === 'timed' ? `${M.durationText(p.duration)}動作` : `${p.reps}回`;
+    return `${p.action || p.exercise}・${amount}（${p.set}/${p.setTotal}${p.setLabel}・${p.cycle}/${p.cycleTotal}回目）`;
+  }
+
+  function drawClock() {
+    const p = phases[index];
+    if (!p) return;
+    $('clock').textContent = p.duration === null ? String(p.reps) : clockText(remaining);
+    $('elapsed').textContent = `経過 ${clockText(Math.floor(elapsed))}${p.roundTotal > 1 ? `・${p.round}/${p.roundTotal}周` : ''}`;
+    const fraction = p.duration ? 1 - remaining / p.duration : 0;
+    $('arc').style.strokeDashoffset = CIRCLE * Math.min(1, Math.max(0, fraction));
+    const percent = Math.min(100, Math.floor((index + fraction) / phases.length * 100));
+    $('progress').style.width = `${percent}%`; $('next').textContent = `${percent}%`;
+  }
+
+  function drawSteps() {
+    $('menuTitle').textContent = compiled.menu.name;
+    document.title = `${compiled.menu.name}｜トレーニングタイマー`;
+    $('activeMenuDescription').textContent = `${compiled.menu.name}・${compiled.items.length}項目・合計${M.durationText(compiled.seconds)}${compiled.manualCount ? ' ＋ 回数種目の時間' : ''}`;
+    $('steps').innerHTML = compiled.items.map((item, i) => `<div class="step" id="step-${i}"><b>${i + 1}. ${escapeHTML(item.name)}</b><small>合計 ${M.durationText(item.seconds)}${item.manualCount ? ' ＋ 回数種目の時間' : ''}</small></div>`).join('');
+    $('storageNotice').textContent = storageMessage;
+    $('storageNotice').hidden = !storageMessage;
+  }
+
+  function update() {
+    syncToggle();
+    const p = phases[index];
+    $('skip').disabled = !p;
+    if (!p) {
+      $('elapsed').textContent = `経過 ${clockText(Math.floor(elapsed))}`;
+      $('phase').textContent = 'すべて完了'; $('title').textContent = 'トレーニング完了'; $('detail').textContent = 'おつかれさまでした';
+      $('clock').textContent = '✓'; $('clockLabel').textContent = '完了'; $('cue').textContent = '今日のメニューを完了';
+      $('setValue').textContent = '完了'; $('setNote').textContent = 'すべてのセットを終了';
+      $('intervalLabel').textContent = 'インターバル'; $('intervalValue').textContent = '—'; $('intervalNote').textContent = 'すべて終了しました';
+      $('nextExercise').textContent = 'すべて終了'; $('nextExerciseNote').textContent = 'おつかれさまでした'; $('nextAction').textContent = 'なし';
+      $('count').textContent = 'トレーニング完了'; $('next').textContent = '100%'; $('progress').style.width = '100%';
+      $('dial').className = 'dial'; $('timer').dataset.mode = ''; $('arc').style.strokeDashoffset = 0;
+      for (const el of document.querySelectorAll('.step')) { el.classList.remove('active'); el.classList.add('done'); }
+      return;
+    }
+    const rest = !['work', 'prepare'].includes(p.type), manual = p.type === 'work' && p.duration === null;
+    $('timer').dataset.mode = rest ? 'rest' : ['reps', 'manual'].includes(p.kind) ? 'pull' : 'hang';
+    $('phase').textContent = phaseLabel(p);
+    $('title').textContent = p.type === 'prepare' && p.preparation === 'menu' ? 'スタート前の準備' : p.exercise;
+    $('title').title = p.exercise;
+    $('detail').textContent = p.type === 'prepare' ? `${M.nextExercise(phases, index)?.exercise || '次の動作'}を始めます` : p.note;
+    const standalone = !p.loops.length && p.type === 'rest';
+    $('setLabel').textContent = p.setLabel;
+    $('setValue').innerHTML = standalone ? '—' : `${p.set} <small>/ ${p.setTotal}</small>`;
+    $('setNote').textContent = standalone ? '休憩のみの項目' : p.type === 'exerciseRest' ? `全${p.setTotal}セット完了` : p.type === 'setRest' ? `${p.set}セット完了 → 次は${p.set + 1}` : `今は ${p.set} セット目`;
+    $('intervalLabel').textContent = p.cycleLabel;
+    $('intervalValue').innerHTML = standalone ? '—' : `${p.cycle} <small>/ ${p.cycleTotal}</small>`;
+    $('intervalNote').textContent = rest ? M.durationText(p.duration) + '休憩' : p.kind === 'manual' ? `${p.reps}回 ＋ 休憩${p.cycleRestSeconds}秒` : p.kind === 'reps' ? `${p.reps}回／${p.workSeconds}秒 ＋ 休憩${p.cycleRestSeconds}秒` : `動作${p.workSeconds}秒 ＋ 休憩${p.cycleRestSeconds}秒`;
+    $('clockLabel').textContent = manual ? '回・終わったら「次へ」' : p.type === 'work' ? p.kind === 'reps' ? '次のインターバルまで' : '動作終了まで' : p.type === 'prepare' ? '開始まで' : '休憩終了まで';
+    $('cue').textContent = manual ? `${p.reps}回が終わったら「完了して次へ」を押してください` : p.type === 'work' && p.kind === 'reps' ? `開始時に${p.reps}回 → 残りはレスト` : p.type === 'work' ? `${M.durationText(p.duration)} 動作を続ける` : '次の動作に備えましょう';
+    $('skip').textContent = manual ? '完了して次へ ↠' : '次へ ↠';
+    const next = M.nextExercise(phases, index);
+    $('nextExercise').textContent = next ? next.exercise : 'トレーニング完了';
+    $('nextExercise').title = next ? next.exercise : 'トレーニング完了';
+    $('nextExerciseNote').textContent = !next ? 'この種目と休憩が終わったらメニュー終了' : p.type === 'prepare' ? '準備時間が終わったら開始' : next.round > p.round ? `次は ${next.round}周目` : p.type === 'exerciseRest' || p.type === 'rest' ? 'この休憩が終わったら開始' : '現在の種目と設定した休憩のあと';
+    $('nextAction').textContent = actionName(phases[index + 1]);
+    $('count').textContent = '全体の進み具合';
+    $('dial').className = 'dial ' + (rest ? 'rest' : ['reps', 'manual'].includes(p.kind) ? 'pull' : '');
+    for (const [i, exercise] of compiled.items.entries()) {
+      const element = $(`step-${i}`);
+      element.classList.toggle('active', exercise.id === p.exerciseId);
+      element.classList.toggle('done', i < p.exerciseIndex);
+    }
+    drawClock();
+  }
+
+  function pause() { running = false; cancelAnimationFrame(frame); last = null; syncToggle(); }
+  function advance() {
+    index++;
+    if (index >= phases.length) { running = false; cancelAnimationFrame(frame); remaining = 0; }
+    else remaining = phases[index].duration;
+  }
+  function tick(time) {
+    if (!running) return;
+    let delta = last === null ? 0 : Math.max(0, (time - last) / 1000);
+    last = time;
+    const previousIndex = index;
+    while (delta > 0 && index < phases.length) {
+      if (remaining === null) { elapsed += delta; break; }
+      const spent = Math.min(delta, remaining);
+      elapsed += spent; remaining -= spent; delta -= spent;
+      if (remaining <= 0) advance();
+    }
+    if (index !== previousIndex) { beep(!running || phases[index]?.type !== 'work'); update(); }
+    else drawClock();
+    if (running) frame = requestAnimationFrame(tick);
+  }
+  function resetTimer() { pause(); index = 0; remaining = phases[0].duration; elapsed = 0; started = false; update(); }
+
+  $('toggle').onclick = () => {
+    if (index >= phases.length) return;
+    if (running) pause();
+    else { running = true; started = true; last = null; syncToggle(); beep(); frame = requestAnimationFrame(tick); }
+  };
+  $('skip').onclick = () => { if (index < phases.length) { advance(); last = null; beep(); update(); } };
+  $('reset').onclick = resetTimer;
+  document.addEventListener('visibilitychange', syncScreenLock);
+  window.addEventListener('pagehide', () => { if (screenLock) { screenLock.release().catch(() => {}); screenLock = null; } });
+
+  let insertTarget = null, movingId = null, draggedId = null;
+  let foldedIds = new Set();
+  let undoStack = [], redoStack = [], lastEditKey = '', lastEditTime = 0;
+  function draftMenu() { return editorMenus.find(menu => menu.id === editorId); }
+  function editorError(message = '') { $('editorError').textContent = message; $('editorError').hidden = !message; }
+  function announce(message) { $('builderNotice').textContent = message; }
+  function snapshot() { return M.clone({ menus: editorMenus, id: editorId }); }
+  function historyState() { $('undoBlock').disabled = !undoStack.length; $('redoBlock').disabled = !redoStack.length; }
+  function remember(key = '') {
+    const now = Date.now();
+    if (!key || key !== lastEditKey || now - lastEditTime > 700) {
+      undoStack.push(snapshot()); if (undoStack.length > 60) undoStack.shift();
+    }
+    redoStack = []; lastEditKey = key; lastEditTime = now; historyState();
+  }
+  function restoreHistory(from, to) {
+    if (!from.length) return;
+    to.push(snapshot()); const state = from.pop(); editorMenus = state.menus; editorId = state.id;
+    insertTarget = movingId = null; lastEditKey = ''; renderEditor();
+  }
+
+  function renderMenuSelect() {
+    $('menuSelect').innerHTML = editorMenus.map(menu => `<option value="${escapeHTML(menu.id)}"${menu.id === editorId ? ' selected' : ''}>${escapeHTML(menu.name || '名前未入力')}</option>`).join('');
+    $('deleteMenu').disabled = editorMenus.length <= 1;
+    $('newMenu').disabled = $('duplicateMenu').disabled = editorMenus.length >= 20;
+  }
+  function field(node, key, label, options = {}) {
+    const id = `part-${node.id}-${key}`, value = node[key];
+    let control;
+    if (options.choices) control = `<select id="${escapeHTML(id)}" data-owner="${escapeHTML(node.id)}" data-field="${key}">${Object.entries(options.choices).map(([key, label]) => `<option value="${key}"${key === value ? ' selected' : ''}>${label}</option>`).join('')}</select>`;
+    else control = `<input id="${escapeHTML(id)}" data-owner="${escapeHTML(node.id)}" data-field="${key}" ${options.numeric ? `type="number" inputmode="numeric" min="${options.min ?? 1}" max="${options.max || 7200}" step="1" value="${Number.isFinite(value) ? value : ''}"` : `maxlength="${options.max || 40}" value="${escapeHTML(value || '')}"`} ${options.placeholder ? `placeholder="${escapeHTML(options.placeholder)}"` : ''}>`;
+    return `<label class="block-field${options.wide ? ' wide' : ''}" for="${escapeHTML(id)}"><span>${label}</span>${control}</label>`;
+  }
+  function paletteMarkup() {
+    const parts = [
+      { type: 'exercise', label: '種目' },
+      { type: 'loop', role: 'sets', label: 'セット' },
+      { type: 'loop', role: 'intervals', label: 'インターバル' },
+      { type: 'work', label: '動作' },
+      { type: 'rest', label: '休憩' },
+      { type: 'prepare', label: '準備' },
+      { type: 'loop', role: 'repeat', label: 'くり返し' }
+    ];
+    return parts.map(part => `<button type="button" class="palette-part part-${part.type}${part.role ? ` loop-${part.role}` : ''}" data-add="${part.type}"${part.role ? ` data-role="${part.role}"` : ''}>${part.type === 'loop' ? '⟳' : '＋'} ${part.label}</button>`).join('');
+  }
+  function loopDisplay(node) {
+    return ({
+      sets: { label: 'セット', count: 'セット数', rest: 'セット間休憩（秒）', description: '中のインターバルや動作を、ひとまとまりとしてくり返します。', end: '1セット分の終わり' },
+      intervals: { label: 'インターバル', count: 'インターバル回数', rest: '各回の間に追加する休憩（秒）', description: '中の動作と、その動作に設定した休憩をくり返します。', end: 'インターバルの終わり' },
+      rounds: { label: '周回', count: '周回数', rest: '周回間休憩（秒）', description: '中のメニューをまとめて周回します。', end: '1周分の終わり' },
+      repeat: { label: 'くり返し', count: 'くり返す回数', rest: 'くり返しの間に追加する休憩（秒）', description: '中に入れたパーツを、自由に組み合わせてくり返します。', end: 'ここまでくり返す' }
+    })[node.role] || { label: 'くり返し', count: 'くり返す回数', rest: 'くり返し間休憩（秒）', description: '', end: 'ここまでくり返す' };
+  }
+  function slotMarkup(parentId, position, empty = false) {
+    const parent = parentId || '', active = insertTarget?.parentId === parentId && insertTarget?.position === position;
+    const allowed = !movingId || M.canMove(draftMenu().blocks, movingId, parentId);
+    return `<div class="insert-zone${active ? ' selected' : ''}${movingId ? ' move-zone' : ''}">
+      <button type="button" class="insert-slot" data-parent="${escapeHTML(parent)}" data-position="${position}" aria-label="${empty ? 'この中' : 'この位置'}にパーツを追加"${allowed ? '' : ' disabled'}>${movingId ? '↓ ここへ移動' : empty ? '＋ この中にパーツを入れる' : '＋'}</button>
+      ${active && !movingId ? `<div class="inline-palette"><span>ここに追加</span>${paletteMarkup()}<button type="button" class="palette-close" data-action="close-palette" aria-label="パーツ選択を閉じる">×</button></div>` : ''}
+    </div>`;
+  }
+  function listMarkup(nodes, parentId = null) {
+    let html = slotMarkup(parentId, 0, nodes.length === 0);
+    nodes.forEach((node, i) => { html += nodeMarkup(node, i, nodes.length) + slotMarkup(parentId, i + 1); });
+    return html;
+  }
+  function nodeMarkup(node, position, siblings) {
+    const owner = escapeHTML(node.id), container = Boolean(node.children);
+    const loop = node.type === 'loop' ? loopDisplay(node) : null;
+    const label = loop ? loop.label : M.BLOCKS[node.type];
+    const controls = `<div class="block-actions">
+      ${container ? `<button type="button" data-action="fold" aria-expanded="${!foldedIds.has(node.id)}">${foldedIds.has(node.id) ? 'ひらく' : 'たたむ'}</button>` : ''}
+      <button type="button" data-action="up"${position === 0 ? ' disabled' : ''} aria-label="${escapeHTML(M.blockTitle(node))}を上へ">↑</button>
+      <button type="button" data-action="down"${position === siblings - 1 ? ' disabled' : ''} aria-label="${escapeHTML(M.blockTitle(node))}を下へ">↓</button>
+      <button type="button" data-action="move">移動</button><button type="button" data-action="duplicate">複製</button><button type="button" data-action="delete" class="danger">外す</button>
+    </div>`;
+    let body = '', extra = '';
+    if (node.type === 'exercise') {
+      body = field(node, 'name', '種目名', { placeholder: '例：指ぶら下がり', wide: true });
+      extra = `<details class="block-options"><summary>器具・持ち方のメモ</summary>${field(node, 'note', 'メモ（任意）', { max: 100, wide: true })}</details>`;
+    } else if (node.type === 'loop') {
+      body = `<p class="loop-description">${loop.description}</p><div class="block-grid">${field(node, 'count', loop.count, { numeric: true, max: 99 })}${field(node, 'betweenRestSeconds', loop.rest, { numeric: true, min: 0 })}</div><p class="loop-rest-note">${node.role === 'sets' ? 'セット間休憩は最後のセットの後には入りません。' : '動作パーツ内の休憩に追加されます。通常は0秒にします。最後の回の後には入りません。'}</p>`;
+      extra = `<details class="block-options"><summary>パーツの種類を変更</summary>${field(node, 'role', '種類・タイマーのカウント表示', { choices: M.LOOP_ROLES })}</details>`;
+    } else if (node.type === 'work') {
+      body = `<div class="block-grid">${field(node, 'mode', '動作の方法', { choices: { timed: '時間で行う', reps: '回数＋制限時間', manual: '回数のみ・手動完了' }, wide: true })}${node.mode !== 'manual' ? field(node, 'seconds', node.mode === 'reps' ? '動作の持ち時間（秒）' : '動作時間（秒）', { numeric: true }) : ''}${node.mode !== 'timed' ? field(node, 'reps', '動作回数（回）', { numeric: true, max: 999 }) : ''}${field(node, 'restSeconds', '動作後の休憩時間（秒）', { numeric: true, min: 0 })}</div><p class="work-rest-summary" data-work-summary="${owner}"></p>`;
+      extra = `<details class="block-options"><summary>動作名・メモ（任意）</summary><div class="block-grid">${field(node, 'name', '動作名', { placeholder: '空欄なら種目名を使用', wide: true })}${field(node, 'note', 'メモ', { max: 100, wide: true })}</div></details>`;
+    } else {
+      body = field(node, 'seconds', node.type === 'prepare' ? '準備時間（秒）' : '休憩時間（秒）', { numeric: true });
+      extra = `<details class="block-options"><summary>名前（任意）</summary>${field(node, 'name', '名前', { placeholder: node.type === 'rest' ? '例：水分補給' : '例：道具を準備', wide: true })}</details>`;
+    }
+    return `<section class="program-block part-${node.type}${loop ? ` loop-${escapeHTML(node.role)}` : ''}${container ? ' container-block' : ''}${movingId === node.id ? ' moving-block' : ''}" data-node="${owner}" aria-label="${label}ブロック">
+      <div class="block-top"><button type="button" class="drag-handle" draggable="true" data-drag="${owner}" data-action="move" aria-label="ドラッグまたはタップで移動">⠿</button><span class="block-kind">${label}</span>${controls}${loop ? `<strong class="loop-summary" data-loop-summary="${owner}">${escapeHTML(M.blockTitle(node))}</strong>` : ''}</div>
+      <div class="block-settings">${body}${extra}</div>
+      ${container ? `<div class="block-children">${foldedIds.has(node.id) ? `<p class="folded-summary">中に ${M.countBlocks(node.children)} パーツ</p>${slotMarkup(node.id, node.children.length, true)}` : listMarkup(node.children, node.id)}</div><div class="block-end">${loop ? loop.end : '種目の終わり'}</div>` : ''}
+    </section>`;
+  }
+  function renderBlocks() {
+    $('blockCanvas').innerHTML = listMarkup(draftMenu().blocks);
+    const moving = movingId && M.findBlock(draftMenu().blocks, movingId)?.node;
+    $('moveMessage').textContent = moving ? `「${M.blockTitle(moving)}」の移動先をタップしてください。` : '';
+    $('moveBar').hidden = !moving;
+    const parent = insertTarget?.parentId && M.findBlock(draftMenu().blocks, insertTarget.parentId)?.node;
+    $('insertTarget').textContent = insertTarget ? `追加先：${parent ? M.blockTitle(parent) + ' の中' : 'メニュー全体'}` : 'パーツをタップで末尾に追加。＋を押すと追加位置を選べます。';
+    historyState(); updateEditorPreview();
+  }
+  function renderEditor() {
+    renderMenuSelect(); $('menuName').value = draftMenu().name; $('menuSound').checked = draftMenu().soundEnabled !== false;
+    $('librarySummary').textContent = `${draftMenu().name || '名前未入力'}：メニューの設定・切り替え`;
+    editorError(); renderBlocks();
+  }
+  function updateEditorPreview() {
+    $('blockCanvas').querySelectorAll('[data-loop-summary]').forEach(element => {
+      const node = M.findBlock(draftMenu().blocks, element.dataset.loopSummary)?.node;
+      if (node) element.textContent = M.blockTitle(node);
+    });
+    $('blockCanvas').querySelectorAll('[data-work-summary]').forEach(element => {
+      const node = M.findBlock(draftMenu().blocks, element.dataset.workSummary)?.node;
+      if (!node) return;
+      const action = node.mode === 'manual' ? `${node.reps}回が完了` : `${node.mode === 'reps' ? '持ち時間' : '動作'}${node.seconds}秒`;
+      element.textContent = `${action} → 休憩${Number.isFinite(node.restSeconds) ? node.restSeconds : '—'}秒${node.restSeconds === 0 ? '（すぐ次へ）' : ''}`;
+    });
+    try {
+      const result = M.compileMenu({ ...draftMenu(), name: draftMenu().name || 'プレビュー' });
+      $('menuEstimate').textContent = `${result.items.length}項目 ／ 合計 ${M.durationText(result.seconds)}${result.manualCount ? ' ＋ 回数種目の時間' : ''}`;
+    } catch (error) { $('menuEstimate').textContent = `未完成：${error.message}`; }
+  }
+  function scrollToNode(id, focus = false) {
+    const node = Array.from($('blockCanvas').querySelectorAll('[data-node]')).find(element => element.dataset.node === id);
+    node?.scrollIntoView({ block: 'nearest', behavior: 'auto' });
+    if (focus) node?.querySelector('input')?.focus({ preventScroll: true });
+  }
+  function appendBlock(type, role = 'repeat') {
+    if (M.countBlocks(draftMenu().blocks) + (type === 'exercise' ? 2 : 1) > 300) { editorError('ブロックは300個までです。'); return; }
+    const target = insertTarget || { parentId: null, position: draftMenu().blocks.length };
+    try {
+      const list = M.childrenAt(draftMenu().blocks, target.parentId);
+      remember(); const node = M.newBlock(type);
+      if (type === 'loop' && M.LOOP_ROLES[role]) { node.role = role; node.count = role === 'intervals' ? 6 : role === 'sets' ? 4 : 3; }
+      list.splice(Math.min(target.position, list.length), 0, node);
+      insertTarget = node.children ? { parentId: node.id, position: node.children.length } : { parentId: target.parentId, position: target.position + 1 };
+      movingId = null; editorError(); renderBlocks(); scrollToNode(node.id, true); announce(`${type === 'loop' ? loopDisplay(node).label : M.BLOCKS[type]}を追加しました。`);
+    } catch (error) { editorError(error.message); }
+  }
+  function moveTo(parentId, position, sourceId = movingId) {
+    if (!sourceId) return;
+    try {
+      remember(); M.moveBlock(draftMenu().blocks, sourceId, parentId, position);
+      movingId = insertTarget = null; editorError(); renderBlocks(); scrollToNode(sourceId); announce('ブロックを移動しました。');
+    } catch (error) { editorError(error.message); }
+  }
+
+  $('editMenu').onclick = () => {
+    pause(); editorMenus = M.clone(library); editorId = activeId; insertTarget = movingId = null;
+    undoStack = []; redoStack = []; foldedIds = new Set(draftMenu().blocks.slice(1).filter(node => node.children).map(node => node.id)); lastEditKey = ''; announce(''); renderEditor();
+    $('menuEditor').showModal(); $('menuSelect').focus();
+  };
+  $('cancelEditor').onclick = $('closeEditor').onclick = () => $('menuEditor').close();
+  $('undoBlock').onclick = () => restoreHistory(undoStack, redoStack);
+  $('redoBlock').onclick = () => restoreHistory(redoStack, undoStack);
+  $('cancelMove').onclick = () => { movingId = null; renderBlocks(); };
+  $('menuSelect').onchange = event => { editorId = event.target.value; insertTarget = movingId = null; lastEditKey = ''; renderEditor(); };
+  $('newMenu').onclick = () => { remember(); const menu = M.newMenu(); editorMenus.push(menu); editorId = menu.id; insertTarget = movingId = null; renderEditor(); $('menuName').focus(); };
+  $('duplicateMenu').onclick = () => {
+    remember(); const menu = M.clone(draftMenu()); menu.id = M.uid(); menu.name = menu.name.slice(0, 33) + '（コピー）'; menu.blocks = menu.blocks.map(M.duplicateBlock);
+    editorMenus.push(menu); editorId = menu.id; insertTarget = movingId = null; renderEditor();
+  };
+  $('deleteMenu').onclick = () => {
+    if (editorMenus.length <= 1) return;
+    remember(); const position = editorMenus.findIndex(menu => menu.id === editorId);
+    editorMenus.splice(position, 1); editorId = editorMenus[Math.min(position, editorMenus.length - 1)].id; insertTarget = movingId = null; renderEditor();
+  };
+  $('menuName').oninput = event => { remember('menu-name'); draftMenu().name = event.target.value; $('librarySummary').textContent = `${event.target.value || '名前未入力'}：メニューの設定・切り替え`; renderMenuSelect(); editorError(); updateEditorPreview(); };
+  $('menuSound').oninput = event => { remember(); draftMenu().soundEnabled = event.target.checked; };
+
+  function paletteClick(event) { const button = event.target.closest('[data-add]'); if (button && !button.disabled) appendBlock(button.dataset.add, button.dataset.role); }
+  $('blockPalette').innerHTML = paletteMarkup();
+  $('blockPalette').addEventListener('click', paletteClick);
+  $('blockCanvas').addEventListener('click', event => {
+    const add = event.target.closest('[data-add]'); if (add && !add.disabled) { appendBlock(add.dataset.add, add.dataset.role); return; }
+    const slot = event.target.closest('[data-parent]');
+    if (slot && !slot.disabled) {
+      const parentId = slot.dataset.parent || null, position = Number(slot.dataset.position);
+      if (movingId) moveTo(parentId, position);
+      else { insertTarget = insertTarget?.parentId === parentId && insertTarget?.position === position ? null : { parentId, position }; renderBlocks(); }
+      return;
+    }
+    const button = event.target.closest('button[data-action]'); if (!button || button.disabled) return;
+    const action = button.dataset.action;
+    if (action === 'close-palette') { insertTarget = null; renderBlocks(); return; }
+    const id = button.closest('[data-node]')?.dataset.node, found = M.findBlock(draftMenu().blocks, id); if (!found) return;
+    if (action === 'fold') { if (foldedIds.has(id)) foldedIds.delete(id); else foldedIds.add(id); renderBlocks(); return; }
+    if (action === 'move') { movingId = movingId === id ? null : id; insertTarget = null; renderBlocks(); announce('＋の位置を選ぶと移動できます。'); return; }
+    if (action === 'up' || action === 'down') { moveTo(found.parentId, found.index + (action === 'up' ? -1 : 2), id); return; }
+    if (action === 'duplicate' && M.countBlocks(draftMenu().blocks) + M.countBlocks([found.node]) > 300) { editorError('ブロックは300個までです。'); return; }
+    remember();
+    if (action === 'delete') { found.list.splice(found.index, 1); announce('ブロックを外しました。「元に戻す」で復元できます。'); }
+    if (action === 'duplicate') { const copy = M.duplicateBlock(found.node); found.list.splice(found.index + 1, 0, copy); announce('ブロックを複製しました。'); }
+    insertTarget = movingId = null; editorError(); renderBlocks();
+  });
+  $('blockCanvas').addEventListener('input', event => {
+    const input = event.target, id = input.dataset.owner, field = input.dataset.field;
+    if (!id || !field || ['mode', 'role'].includes(field)) return;
+    const node = M.findBlock(draftMenu().blocks, id)?.node; if (!node) return;
+    remember(id + field); node[field] = input.type === 'number' ? input.valueAsNumber : input.value;
+    editorError(); updateEditorPreview();
+  });
+  $('blockCanvas').addEventListener('change', event => {
+    const input = event.target, field = input.dataset.field;
+    if (!['mode', 'role'].includes(field)) return;
+    const node = M.findBlock(draftMenu().blocks, input.dataset.owner)?.node; if (!node) return;
+    remember(); node[field] = input.value;
+    if (field === 'mode') { if (!node.seconds) node.seconds = 30; if (!node.reps) node.reps = 5; }
+    renderBlocks();
+    document.getElementById(input.id)?.focus({ preventScroll: true });
+  });
+
+  $('blockCanvas').addEventListener('dragstart', event => {
+    const handle = event.target.closest('[data-drag]');
+    if (!handle) { event.preventDefault(); return; }
+    draggedId = handle.dataset.drag; event.dataTransfer.setData('text/plain', draggedId); event.dataTransfer.effectAllowed = 'move';
+    $('blockCanvas').classList.add('dragging');
+  });
+  $('blockCanvas').addEventListener('dragover', event => {
+    const slot = event.target.closest('[data-parent]');
+    if (!draggedId || !slot || !M.canMove(draftMenu().blocks, draggedId, slot.dataset.parent || null)) return;
+    event.preventDefault(); event.dataTransfer.dropEffect = 'move'; slot.classList.add('drag-over');
+  });
+  $('blockCanvas').addEventListener('dragleave', event => { event.target.closest('[data-parent]')?.classList.remove('drag-over'); });
+  $('blockCanvas').addEventListener('drop', event => {
+    const slot = event.target.closest('[data-parent]'); if (!draggedId || !slot) return;
+    event.preventDefault(); const id = draggedId; draggedId = null;
+    $('blockCanvas').classList.remove('dragging'); moveTo(slot.dataset.parent || null, Number(slot.dataset.position), id);
+  });
+  $('blockCanvas').addEventListener('dragend', () => { draggedId = null; $('blockCanvas').classList.remove('dragging'); $('blockCanvas').querySelectorAll('.drag-over').forEach(element => element.classList.remove('drag-over')); });
+
+  $('restorePreset').onclick = () => {
+    if (editorMenus.length >= 20) { editorError('メニューは20個までです。'); return; }
+    remember(); const preset = M.defaultMenu(); preset.id = M.uid(); preset.name = 'ボルダリング（初期メニュー）';
+    editorMenus.push(preset); editorId = preset.id; insertTarget = movingId = null; renderEditor();
+  };
+  $('menuForm').addEventListener('submit', event => {
+    event.preventDefault(); let normalized;
+    try {
+      normalized = editorMenus.map(menu => {
+        try { return M.compileMenu(menu).menu; }
+        catch (error) { editorId = menu.id; insertTarget = movingId = null; renderEditor(); throw new Error(`${menu.name || '名前未入力のメニュー'}：${error.message}`); }
+      });
+    } catch (error) { editorError(error.message); return; }
+    library = normalized; activeId = editorId; storageMessage = '';
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ version: 2, activeId, menus: library })); }
+    catch { storageMessage = 'ブラウザに保存できなかったため、このタブを開いている間だけ使えます。'; }
+    compiled = M.compileMenu(library.find(menu => menu.id === activeId)); phases = compiled.phases;
+    drawSteps(); resetTimer(); $('menuEditor').close();
+  });
+
+  drawSteps(); update();
+})();
+</script>
+</body>
+</html>
