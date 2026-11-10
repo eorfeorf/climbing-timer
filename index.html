@@ -142,7 +142,9 @@
   }
   const $=id=>document.getElementById(id), circumference=2*Math.PI*44;
   const arc=$('arc'); arc.style.strokeDasharray=circumference; arc.style.strokeDashoffset=0;
-  let index=0,remaining=phases[0].duration,running=false,elapsed=0,last=0,raf=0,ctx;
+  const PREPARATION_SECONDS=5;
+  let index=0,remaining=phases[0].duration,running=false,elapsed=0,last=null,raf=0,ctx;
+  let started=false,preparation=0;
   function fmt(n){const m=Math.floor(n/60),s=n%60;return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`}
   function beep(long=false){try{ctx=ctx||new (window.AudioContext||window.webkitAudioContext)();if(ctx.state==='suspended')ctx.resume();const o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.frequency.value=long?740:960;g.gain.setValueAtTime(.001,ctx.currentTime);g.gain.exponentialRampToValueAtTime(.16,ctx.currentTime+.015);g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+(long?.28:.12));o.start();o.stop(ctx.currentTime+(long?.3:.14))}catch{}}
   function drawSteps(){const groups=[['指ぶら下がり','2000 下段｜7秒保持 / 3秒レスト × 6 を4セット'],['セット間レスト','各セット間 2分'],['指ぶら下がり後レスト','5分'],['普通懸垂','5回 / 分 × 10セット'],['逆手懸垂','5回 / 分 × 10セット']];$('steps').innerHTML=groups.map(([name,desc])=>`<div class="step" id="step-${name}"><b>${name}</b><small>${desc}</small></div>`).join('')}
@@ -180,7 +182,7 @@
   function syncToggle(){
     syncScreenLock();
     const done=index>=phases.length;
-    $('toggleLabel').textContent=done?'完了':running?'タップで一時停止':elapsed>0||index>0?'タップで再開':'タップして開始';
+    $('toggleLabel').textContent=done?'完了':running?'タップで一時停止':started||index>0?'タップで再開':'タップして開始';
     $('toggle').setAttribute('aria-label',done?'トレーニング完了':running?'タイマーを一時停止':'タイマーを開始・再開');
     $('toggle').setAttribute('aria-pressed',String(running));
   }
@@ -197,6 +199,14 @@
       $('count').textContent='トレーニング完了';$('next').textContent='100%';$('progress').style.width='100%';
       $('toggleLabel').textContent='完了';$('toggle').disabled=true;$('dial').className='dial';$('timer').dataset.mode='';arc.style.strokeDashoffset=0;
       for(const el of document.querySelectorAll('.step')){el.classList.remove('active');el.classList.add('done')}
+      return;
+    }
+    if(preparation>0){
+      $('phase').textContent='準備中';
+      $('clockLabel').textContent='開始まで';
+      $('cue').textContent='最初の動作に備えましょう';
+      $('nextAction').textContent=actionName(p);
+      drawClock();
       return;
     }
     const resting=['rest','longrest','transition'].includes(p.type);
@@ -225,10 +235,59 @@
     const node=$('step-'+active);if(node)node.classList.add('active');
   }
   function advance(){index++;if(index>=phases.length){running=false;$('toggle').disabled=true;update();beep(true);return}remaining=phases[index].duration;beep(phases[index].type==='longrest');update()}
-  function tick(t){if(!running)return;if(!last)last=t;const delta=(t-last)/1000;last=t;elapsed+=delta;remaining-=delta;if(remaining<=0){advance();if(!running)return} $('clock').textContent=fmt(Math.ceil(remaining));$('elapsed').textContent=`経過 ${fmt(Math.floor(elapsed))}`;arc.style.strokeDashoffset=circumference*(1-Math.max(0,remaining)/phases[index].duration);raf=requestAnimationFrame(tick)}
-  $('toggle').onclick=()=>{if(index>=phases.length)return;running=!running;syncToggle();if(running){last=0;beep();raf=requestAnimationFrame(tick)}else{cancelAnimationFrame(raf);last=0}};
-  $('skip').onclick=()=>{if(index<phases.length){advance();if(running){last=0}}};$('reset').onclick=()=>{running=false;cancelAnimationFrame(raf);index=0;remaining=phases[0].duration;elapsed=0;last=0;$('toggle').disabled=false;syncToggle();update()};
-  document.addEventListener('visibilitychange',()=>{if(!document.hidden&&running){last=0}syncScreenLock()});
+  function drawClock(){
+    const preparing=preparation>0;
+    const seconds=preparing?preparation:remaining;
+    const duration=preparing?PREPARATION_SECONDS:phases[index].duration;
+    $('clock').textContent=fmt(Math.ceil(seconds));
+    $('elapsed').textContent='経過 '+fmt(Math.floor(elapsed));
+    arc.style.strokeDashoffset=circumference*(1-Math.max(0,seconds)/duration);
+  }
+  function finishPreparation(){
+    preparation=0;
+    beep();
+    update();
+  }
+  function tick(time){
+    if(!running)return;
+    let delta=last===null?0:(time-last)/1000;
+    last=time;
+    if(preparation>0){
+      const spent=Math.min(delta,preparation);
+      preparation-=spent;
+      delta-=spent;
+      if(preparation===0)finishPreparation();
+    }
+    elapsed+=delta;
+    remaining-=delta;
+    if(remaining<=0){advance();if(!running)return}
+    drawClock();
+    raf=requestAnimationFrame(tick);
+  }
+  $('toggle').onclick=()=>{
+    if(index>=phases.length)return;
+    running=!running;
+    last=null;
+    if(running){
+      if(!started && index===0)preparation=PREPARATION_SECONDS;
+      started=true;
+      beep();
+      raf=requestAnimationFrame(tick);
+    }else cancelAnimationFrame(raf);
+    update();
+  };
+  $('skip').onclick=()=>{
+    if(index>=phases.length)return;
+    last=null;
+    if(preparation>0)finishPreparation();
+    else advance();
+  };
+  $('reset').onclick=()=>{
+    running=false;cancelAnimationFrame(raf);
+    index=0;remaining=phases[0].duration;elapsed=0;last=null;
+    started=false;preparation=0;$('toggle').disabled=false;update();
+  };
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden&&running)last=null;syncScreenLock()});
   window.addEventListener('pagehide',()=>{if(screenLock){screenLock.release().catch(()=>{});screenLock=null}});
   drawSteps();update();
 })();
