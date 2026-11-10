@@ -595,6 +595,8 @@ if (typeof module !== 'undefined' && module.exports) module.exports = WorkoutMod
   let compiled = M.compileMenu(library.find(menu => menu.id === activeId));
   let phases = compiled.phases, index = 0, remaining = phases[0].duration;
   let running = false, started = false, elapsed = 0, last = null, frame = 0, audio;
+  const PREPARATION_SECONDS = 5;
+  let preparation = 0;
   let screenLock = null, screenLockRequest = null;
   let editorMenus = [], editorId = '';
   $('arc').style.strokeDasharray = CIRCLE;
@@ -666,6 +668,11 @@ if (typeof module !== 'undefined' && module.exports) module.exports = WorkoutMod
   function drawClock() {
     const p = phases[index];
     if (!p) return;
+    if (preparation > 0) {
+      $('clock').textContent = clockText(preparation);
+      $('arc').style.strokeDashoffset = CIRCLE * (1 - preparation / PREPARATION_SECONDS);
+      return;
+    }
     $('clock').textContent = p.duration === null ? String(p.reps) : clockText(remaining);
     $('elapsed').textContent = `経過 ${clockText(Math.floor(elapsed))}${p.roundTotal > 1 ? `・${p.round}/${p.roundTotal}周` : ''}`;
     const fraction = p.duration ? 1 - remaining / p.duration : 0;
@@ -727,6 +734,13 @@ if (typeof module !== 'undefined' && module.exports) module.exports = WorkoutMod
       element.classList.toggle('active', exercise.id === p.exerciseId);
       element.classList.toggle('done', i < p.exerciseIndex);
     }
+    if (preparation > 0) {
+      $('phase').textContent = '準備中';
+      $('clockLabel').textContent = '開始まで';
+      $('cue').textContent = '最初の動作に備えましょう';
+      $('skip').textContent = '次へ ↠';
+      $('nextAction').textContent = actionName(p);
+    }
     drawClock();
   }
 
@@ -740,6 +754,12 @@ if (typeof module !== 'undefined' && module.exports) module.exports = WorkoutMod
     if (!running) return;
     let delta = last === null ? 0 : Math.max(0, (time - last) / 1000);
     last = time;
+    const wasPreparing = preparation > 0;
+    if (wasPreparing) {
+      const spent = Math.min(delta, preparation);
+      preparation -= spent;
+      delta -= spent;
+    }
     const previousIndex = index;
     while (delta > 0 && index < phases.length) {
       if (remaining === null) { elapsed += delta; break; }
@@ -748,17 +768,27 @@ if (typeof module !== 'undefined' && module.exports) module.exports = WorkoutMod
       if (remaining <= 0) advance();
     }
     if (index !== previousIndex) { beep(!running || phases[index]?.type !== 'work'); update(); }
+    else if (wasPreparing && preparation === 0) { beep(); update(); }
     else drawClock();
     if (running) frame = requestAnimationFrame(tick);
   }
-  function resetTimer() { pause(); index = 0; remaining = phases[0].duration; elapsed = 0; started = false; update(); }
+  function resetTimer() { pause(); index = 0; remaining = phases[0].duration; elapsed = 0; started = false; preparation = 0; update(); }
 
   $('toggle').onclick = () => {
     if (index >= phases.length) return;
     if (running) pause();
-    else { running = true; started = true; last = null; syncToggle(); beep(); frame = requestAnimationFrame(tick); }
+    else {
+      if (!started && index === 0) preparation = PREPARATION_SECONDS;
+      running = true; started = true; last = null;
+      update(); beep(); frame = requestAnimationFrame(tick);
+    }
   };
-  $('skip').onclick = () => { if (index < phases.length) { advance(); last = null; beep(); update(); } };
+  $('skip').onclick = () => {
+    if (index >= phases.length) return;
+    if (preparation > 0) preparation = 0;
+    else advance();
+    last = null; beep(); update();
+  };
   $('reset').onclick = resetTimer;
   document.addEventListener('visibilitychange', syncScreenLock);
   window.addEventListener('pagehide', () => { if (screenLock) { screenLock.release().catch(() => {}); screenLock = null; } });
